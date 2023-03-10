@@ -1,7 +1,7 @@
 {
   "name": "react-native-bluetooth-le",
   "version": "0.0.1",
-  "description": "Add numbers with Turbo Native Modules",
+  "description": "Just starting.",
   "react-native": "js/index",
   "source": "js/index",
   "files": [
@@ -21,7 +21,7 @@
     "android"
   ],
   "repository": "https://github.com/lucaswitch/react-native-bluetooth-le.git",
-  "author": "<Your Name> <your_email@your_provider.com> (https://github.com/<your_github_handle>)",
+  "author": "<Lucas Alves> <lucas.developing@gmail.com> (https://github.com/lucaswitch)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/lucaswitch/react-native-bluetooth-le/issues"
@@ -37,7 +37,7 @@
     "type": "modules",
     "jsSrcsDir": "js",
     "android": {
-      "javaPackageName": "com.react-native-bluetooth-le"
+      "javaPackageName": "com.rnbluetoothle"
     }
   }
 }
