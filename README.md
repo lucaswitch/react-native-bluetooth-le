@@ -18,7 +18,7 @@ This react-native library focus on implement common bluetooth operations in reac
 
 ## Imperative API
 
-```
+```js
   import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible} from 'react-native-bluetooth-le';
   
   
