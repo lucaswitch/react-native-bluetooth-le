@@ -11,6 +11,7 @@ Supports android version Android 8.0 (API level 26) or higher
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
     <uses-sdk android:minSdkVersion="26" />
+
     <uses-permission
         android:name="android.permission.BLUETOOTH"
         android:maxSdkVersion="30" />
@@ -25,7 +26,7 @@ Supports android version Android 8.0 (API level 26) or higher
     <!-- Broadcast receivers -->
     <receiver android:name="com.rnbluetoothle.kotlin.receivers.BluetoothStateChangedReceiver">
         <intent-filter>
-            <action android:name="myAction" />
+            <action android:name="ADAPTER_CHANGED_ACTION" />
         </intent-filter>
     </receiver>
 </manifest>

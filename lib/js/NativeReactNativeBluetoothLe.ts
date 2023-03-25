@@ -3,14 +3,19 @@ import {TurboModuleRegistry} from 'react-native';
 
 export interface Spec extends TurboModule {
     /**
-     * Turn on Bluetooth Module of device.
+     * Turn on Bluetooth Module of device if possible.
      */
-    turnOnIfPossible(): Promise<boolean>;
+    turnOnIfPossible(): void;
 
     /**
      * Turn off Bluetooth Module of device.
      */
     turnOffIfPossible(): Promise<boolean>;
+
+    /**
+     * Gets whether bluetooth is supported.
+     */
+    getIsSupported(): boolean;
 }
 
 export default TurboModuleRegistry.get<Spec>(

@@ -18,42 +18,50 @@ class BluetoothAdapterState {
         const val ADAPTER_STATUS_TURNING_ON = 1;
         const val ADAPTER_STATUS_OFF = -1;
         const val ADAPTER_STATUS_TURNING_OFF = 0;
-    }
 
-    /**
-     * Gets bluetooth adapter.
-     */
-    fun getAdapter(): BluetoothAdapter? {
-        val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
-        return bluetoothManager.getAdapter();
-    }
 
-    /**
-     * Gets whether device bluetooth is enabled or not.
-     * In case of device does not have support for bluetooth capabilities returns false.
-     * @return Boolean
-     */
-    fun getIsEnabled(): Boolean {
-        val bluetoothAdapter: BluetoothAdapter? = getAdapter();
-        return !bluetoothAdapter == null && bluetoothAdapter.isEnabled;
-    }
-
-    /**
-     * Turns on bluetooth if possible.
-     */
-    fun turnOnBluetoothIfPossible() {
-        if (!getIsEnabled()) {
-            val requestEnableBluetoothHardwareIntent =
-                Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(requestEnableBluetoothHardwareIntent, REQUEST_ENABLE_BT)
+        /**
+         * Gets bluetooth adapter.
+         */
+        fun getAdapter(): BluetoothAdapter? {
+            val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
+            return bluetoothManager.getAdapter();
         }
-    }
 
-    /**
-     * Turns off bluetooth if possible.
-     * Only possible on SDK < 33
-     */
-    fun turnOffBluetoothIfPossible() {
+        /**
+         * Gets whether bluetooth is supported.
+         */
+        fun getIsSupported(): Boolean {
+            return getAdapter() !== null;
+        }
 
+        /**
+         * Gets whether device bluetooth is enabled or not.
+         * In case of device does not have support for bluetooth capabilities returns false.
+         * @return Boolean
+         */
+        fun getIsEnabled(): Boolean {
+            val bluetoothAdapter: BluetoothAdapter? = getAdapter();
+            return !bluetoothAdapter == null && bluetoothAdapter.isEnabled;
+        }
+
+        /**
+         * Turns on bluetooth if possible.
+         */
+        fun turnOnBluetoothIfPossible() {
+            if (!getIsEnabled()) {
+                val requestEnableBluetoothHardwareIntent =
+                    Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startActivityForResult(requestEnableBluetoothHardwareIntent, REQUEST_ENABLE_BT)
+            }
+        }
+
+        /**
+         * Turns off bluetooth if possible.
+         * Only possible on SDK < 33
+         */
+        fun turnOffBluetoothIfPossible() {
+
+        }
     }
 }
