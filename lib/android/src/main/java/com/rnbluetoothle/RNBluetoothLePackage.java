@@ -34,11 +34,11 @@ public class RNBluetoothLePackage extends TurboReactPackage {
                     new ReactModuleInfo(
                             RNBluetoothLeModule.NAME,
                             RNBluetoothLeModule.NAME,
-                            false, // canOverrideExistingModule
-                            false, // needsEagerInit
-                            true, // hasConstants
-                            false, // isCxxModule
-                            true // isTurboModule
+                            false,
+                            false,
+                            true,
+                            false,
+                            true
                     ));
             return moduleInfos;
         };
