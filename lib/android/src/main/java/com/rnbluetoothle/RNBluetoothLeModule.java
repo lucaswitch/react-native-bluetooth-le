@@ -12,9 +12,8 @@ import com.facebook.react.bridge.ReactMethod;
 import java.util.Map;
 import java.util.HashMap;
 
-import com.rnbluetoothle.NativeReactNativeBluetoothLeSpec;
-
 import com.rnbluetoothle.kotlin.BluetoothAdapterState;
+import com.rnbluetoothle.NativeReactNativeBluetoothLeSpec;
 
 public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
@@ -32,9 +31,17 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
     /**
      * Gets whether bluetooth is supported.
-     * @return
+     *
+     * @return Boolean
      */
     public boolean getIsSupported() {
         return BluetoothAdapterState.getIsSupported();
+    }
+
+    /**
+     * Turns bluetooth adapter On if possible.
+     */
+    public void turnOfIfPossible() {
+        BluetoothAdapterState.turnOnBluetoothIfPossible();
     }
 }

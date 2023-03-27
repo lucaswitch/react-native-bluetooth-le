@@ -10,7 +10,7 @@ export interface Spec extends TurboModule {
     /**
      * Turn off Bluetooth Module of device.
      */
-    turnOffIfPossible(): Promise<boolean>;
+    turnOffIfPossible(): void;
 
     /**
      * Gets whether bluetooth is supported.
