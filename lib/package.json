@@ -37,7 +37,7 @@
     "type": "modules",
     "jsSrcsDir": "js",
     "android": {
-      "javaPackageName": "com.rnbluetoothle"
+      "kotlinPackageName": "com.rnbluetoothle"
     }
   }
 }
