@@ -14,7 +14,8 @@ import java.util.HashMap;
 
 import com.rnbluetoothle.NativeReactNativeBluetoothLeSpec;
 
-//import com.rnbluetoothle.bluetooth.BluetoothAdapterState;
+import com.rnbluetoothle.bluetooth.BluetoothState;
+import android.bluetooth.BluetoothAdapter;
 
 public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
@@ -32,6 +33,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
     /**
      * Gets whether bluetooth is supported.
+     *
      * @return
      */
     @Override
@@ -41,14 +43,20 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
     /**
      * Gets whether bluetooth is supported.
+     *
      * @return
      */
     @Override
     public void turnOnIfPossible() {
-
+        if (BluetoothState.getIsSupported()) {
+            BluetoothAdapter adapter = BluetoothState.getDefaultAdapter();
+            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT); // Bloqueia a UI?
+        }
     }
+
     /**
      * Gets whether bluetooth is supported.
+     *
      * @return
      */
     @Override
