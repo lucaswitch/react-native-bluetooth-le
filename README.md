@@ -25,3 +25,15 @@ This react-native library focus on implement common bluetooth operations in reac
   turnOnBluetoothIfPossible(); // The bluetooth pheripheral was turned on.
   turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
 ```
+
+
+## Contributing
+
+```bash
+  cd playground;
+  yarn add ../lib;
+  cd android;
+  ./gradlew generateCodegenArtifactsFromSchema;
+  cd ..;
+  yarn run android --active-arch-only;
+```
