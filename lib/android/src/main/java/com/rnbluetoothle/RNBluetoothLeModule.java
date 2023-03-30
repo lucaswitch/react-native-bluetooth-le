@@ -38,4 +38,21 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     public boolean getIsSupported() {
         return true;
     }
+
+    /**
+     * Gets whether bluetooth is supported.
+     * @return
+     */
+    @Override
+    public void turnOnIfPossible() {
+
+    }
+    /**
+     * Gets whether bluetooth is supported.
+     * @return
+     */
+    @Override
+    public void turnOffIfPossible() {
+
+    }
 }
