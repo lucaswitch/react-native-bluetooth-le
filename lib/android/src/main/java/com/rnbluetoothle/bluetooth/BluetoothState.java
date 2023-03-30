@@ -1,8 +1,9 @@
 package com.rnbluetoothle.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
+import androidx.annotation.Nullable;
 
-class BluetoothState {
+public class BluetoothState {
     /**
      * Gets the bluetooth adapter or null if not supported.
      * @return

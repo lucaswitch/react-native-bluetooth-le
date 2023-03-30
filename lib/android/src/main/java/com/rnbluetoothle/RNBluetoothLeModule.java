@@ -48,10 +48,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
      */
     @Override
     public void turnOnIfPossible() {
-        if (BluetoothState.getIsSupported()) {
-            BluetoothAdapter adapter = BluetoothState.getDefaultAdapter();
-            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT); // Bloqueia a UI?
-        }
+
     }
 
     /**
