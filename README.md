@@ -29,6 +29,22 @@ This react-native library focus on implement common bluetooth operations in reac
   turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
 ```
 
+## Capabilites
+  - Bluetooth Adapter
+    - Listen to bluetooth peripheral events such Turn Off and Turn On
+    - Get current Bluetooth peripheral status.
+   - GATT
+    - Discovery 
+      - Start discovery and listen to scan events.
+      - Disable discovery and unsubscribe to scan events.
+    - Bonding
+      - Bond with a device.   
+      - Connect to device.
+      - Discover device services
+      - Discover service characteristics.
+    - Transmission
+      - Receive notifications from a device service and characteristic.
+      - Send data to device.
 
 ## Contributing
 
