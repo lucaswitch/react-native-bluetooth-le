@@ -43,7 +43,7 @@ This react-native library focus on implement common bluetooth operations in reac
       - Discover device services.
       - Discover service characteristics.
       - Listen to disconnection from a device.     
-    - Transmission
+  - Transmission
       - Receive notifications from a device service and characteristic.
       - Send data to device.
 
