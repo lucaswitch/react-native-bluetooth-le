@@ -31,7 +31,7 @@ This react-native library focus on implement common bluetooth operations in reac
 
 ## Capabilites
   - Bluetooth Adapter
-    - Listen to bluetooth peripheral events such Turn Off and Turn On
+    - Listen to bluetooth peripheral events such Turn Off and Turn On.
     - Get current Bluetooth peripheral status.
    - GATT
     - Discovery 
@@ -40,8 +40,9 @@ This react-native library focus on implement common bluetooth operations in reac
     - Bonding
       - Bond with a device.   
       - Connect to device.
-      - Discover device services
+      - Discover device services.
       - Discover service characteristics.
+      - Listen to disconnection from a device.     
     - Transmission
       - Receive notifications from a device service and characteristic.
       - Send data to device.
