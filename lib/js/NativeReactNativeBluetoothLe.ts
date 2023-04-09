@@ -1,5 +1,6 @@
 import type {TurboModule} from 'react-native/Libraries/TurboModule/RCTExport';
 import {TurboModuleRegistry} from 'react-native';
+import {StatusChange} from "./types";
 
 export interface Spec extends TurboModule {
     /**
@@ -16,6 +17,16 @@ export interface Spec extends TurboModule {
      * Gets whether bluetooth is supported.
      */
     getIsSupported(): boolean;
+
+    /**
+     * Subscribe for events such "Turn on"/"Turn off" on phone peripheral.
+     */
+    subscribeStateChange(callback: (data: { status: string }) => void): void;
+
+    /**
+     * Unsubscribe for events such "Turn on"/"Turn off" on phone peripheral.
+     */
+    unsubscribeStateChange(): void;
 }
 
 export default TurboModuleRegistry.get<Spec>(
