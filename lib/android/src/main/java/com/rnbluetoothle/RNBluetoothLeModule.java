@@ -30,12 +30,16 @@ import com.rnbluetoothle.bluetooth.BluetoothState;
 import com.rnbluetoothle.receivers.BluetoothStateReceiver;
 import com.rnbluetoothle.receivers.GlobalReceiver;
 
-
 public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
     public static String NAME = "ReactNativeBluetoothLe";
-    public ReactApplicationContext reactContext;
+    private ReactApplicationContext reactContext;
     private BluetoothStateReceiver bluetoothStateReceiver;
+    /**
+     * Receiver that listen to Bluetooth core events in this module.
+     * This receiver only listen intents when the host is on responsive state and the UI is visible.
+     */
+    private GlobalReceiver globalReceiver;
 
     RNBluetoothLeModule(ReactApplicationContext context) {
         super(context);
@@ -47,13 +51,6 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     public String getName() {
         return NAME;
     }
-
-
-    /**
-     * Receiver that listen to Bluetooth core events in this module.
-     * This receiver only listen intents when the host is on responsive state and the UI is visible.
-     */
-    private GlobalReceiver globalReceiver;
 
     /**
      * Gets whether bluetooth is supported.
@@ -85,6 +82,16 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
     }
 
+    /**
+     * Emit event to JS.
+     *
+     * @param eventName
+     * @param args
+     */
+    public void emitReactContextEvent(String eventName, @Nullable WritableMap args) {
+        this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(eventName, args);
+    }
 
     /**
      * Start broadcast receiver related to bluetooth state changing.
@@ -92,7 +99,6 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     @Override
     public void enableStateChange() {
         this.bluetoothStateReceiver = new BluetoothStateReceiver();
-        //Context currentContext = this.reactContext.getApplicationContext();
 
         // Bluetooth state listener receiver.
         this.reactContext.registerReceiver(this.bluetoothStateReceiver, this.bluetoothStateReceiver.createIntentFilter());
@@ -100,7 +106,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
         // Register global listener.
         if (this.globalReceiver == null) {
-            this.globalReceiver = new GlobalReceiver();
+            this.globalReceiver = new GlobalReceiver(this.reactContext);
         }
         this.reactContext.registerReceiver(this.globalReceiver, this.globalReceiver.createIntentFilter());
         Log.v("Bluetooth", "\"GlobalReceiver\" registered receiver.");
@@ -112,7 +118,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     @Override
     public void disableStateChange() {
         if (this.bluetoothStateReceiver != null) {
-            //Context currentContext = this.reactContext.getApplicationContext();
+
             this.reactContext.unregisterReceiver(this.bluetoothStateReceiver);
             this.bluetoothStateReceiver = null;
             Log.v("Bluetooth", "\"bluetoothStateReceiver\" unregistered receiver.");
