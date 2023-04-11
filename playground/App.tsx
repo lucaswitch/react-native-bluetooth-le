@@ -11,7 +11,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     console.log('running');
-    const unsubscribe = Bluetooth.subscribeStateChange(function ({status}) {
+    const unsubscribe = Bluetooth.onStateChange(function ({status}) {
       console.log('status', status);
     });
     return () => {

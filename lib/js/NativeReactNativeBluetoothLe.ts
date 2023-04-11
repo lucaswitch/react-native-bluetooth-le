@@ -21,12 +21,12 @@ export interface Spec extends TurboModule {
     /**
      * Subscribe for events such "Turn on"/"Turn off" on phone peripheral.
      */
-    subscribeStateChange(callback: (data: { status: string }) => void): void;
+    enableStateChange(): void;
 
     /**
      * Unsubscribe for events such "Turn on"/"Turn off" on phone peripheral.
      */
-    unsubscribeStateChange(): void;
+    disableStateChange(): void;
 }
 
 export default TurboModuleRegistry.get<Spec>(
