@@ -1,6 +1,6 @@
 import BluetoothModule from './NativeReactNativeBluetoothLe';
 import {StatusChange} from "./types";
-import{DeviceEventEmitter} from "react-native";
+import {DeviceEventEmitter} from "react-native";
 
 /**
  * Bluetooth Api.
@@ -11,11 +11,11 @@ export const Bluetooth = {
      * @param callback
      */
     onStateChange(callback: (data: StatusChange) => void): Function {
-        BluetoothModule.enableStateChange();
-        DeviceEventEmitter.addListener('onStateChange', callback)
+        const eventName = 'rnbluetoothle.onStateChange';
+        BluetoothModule.addListener(eventName);
+        DeviceEventEmitter.addListener(eventName, callback)
         return function () {
-            DeviceEventEmitter.removeAllListeners('onStateChange')
-            BluetoothModule.disableStateChange();
+            BluetoothModule.removeListener(eventName);
         }
     }
 }

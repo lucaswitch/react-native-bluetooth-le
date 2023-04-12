@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -46,24 +47,14 @@ public class GlobalReceiver extends BroadcastReceiver {
   ) {
     WritableMap payload = Arguments.createMap();
 
-    // Current Bluetooth Adapter state.
-    int currentBluetoothState = intent.getIntExtra(
-      BluetoothAdapter.EXTRA_STATE
-    );
-    if (currentBluetoothState == BluetoothAdapter.STATE_OFF) {
+     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    int state = bluetoothAdapter.getState();
+    if (state == BluetoothAdapter.STATE_OFF) {
       payload.putString("status", "off");
-    } else if (currentBluetoothState == BluetoothAdapter.STATE_ON) {
+      return payload;
+    } else if (state == BluetoothAdapter.STATE_ON) {
       payload.putString("status", "on");
-    }
-
-    // Previous Bluetooth Adapter state.
-    int prevBluetoothState = intent.getIntExtra(
-      BluetoothAdapter.EXTRA_PREVIOUS_STATE
-    );
-    if (prevBluetoothState == BluetoothAdapter.STATE_OFF) {
-      payload.putString("prev_status", "off");
-    } else if (prevBluetoothState == BluetoothAdapter.STATE_ON) {
-      payload.putString("prev_status", "on");
+      return payload;
     }
 
     return null;
@@ -112,7 +103,7 @@ public class GlobalReceiver extends BroadcastReceiver {
    * Register this broadcast receiver.
    */
   public void register() {
-    reactContext.registerReceiver(this, this.createIntentFilter());
+    reactContext.registerReceiver(this, createIntentFilter());
     Log.v("Bluetooth", "\"GlobalReceiver\" registered.");
   }
 
@@ -131,7 +122,7 @@ public class GlobalReceiver extends BroadcastReceiver {
     if (enabledEvents.size() > 0) {
       final String className = context.getClass().getName();
       String action = intent.getAction();
-      Log.v("Bluetooth", this.name + " received a intent: " + action);
+      Log.v("Bluetooth", className + " received a intent: " + action);
 
       switch (action) {
         case BluetoothAdapter.ACTION_STATE_CHANGED: // Bluetooth state just changed to On or Off.
@@ -144,7 +135,7 @@ public class GlobalReceiver extends BroadcastReceiver {
           }
           break;
         default:
-          Log.v("Bluetooth", this.name + " received a intent: " + action);
+          Log.v("Bluetooth", className + " received a intent: " + action);
           break;
       }
     }

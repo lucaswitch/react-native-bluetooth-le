@@ -7,12 +7,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.rnbluetoothle.NativeReactNativeBluetoothLeSpec;
 import com.rnbluetoothle.bluetooth.BluetoothState;
-import com.rnbluetoothle.receivers.GlobalReceiver;
+import com.rnbluetoothle.bluetooth.receivers.*;
 
 public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
@@ -82,7 +83,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
    */
   private void unregisterGlobalBroadcast() {
     if (globalReceiver != null) {
-      reactContext.unregisterReceiver(this.bluetoothStateReceiver);
+      reactContext.unregisterReceiver(globalReceiver);
       globalReceiver = null;
     }
   }
@@ -90,8 +91,9 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
   /**
    * Add a JS module event listener.
    */
-  @ReactMethod
+  @Override
   public void addListener(String eventName) {
+    Log.v("Bluetooth", "Received addListener on event: "+ eventName);
     registerGlobalBroadcast();
     globalReceiver.enableEvent(eventName);
   }
@@ -99,8 +101,9 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
   /**
    * Remove a JS module event listener.
    */
-  @ReactMethod
+  @Override
   public void removeListener(String eventName){
+    Log.v("Bluetooth", "Received removeListener on event: "+ eventName);
     globalReceiver.disableEvent(eventName);
     if(globalReceiver.getEventsCount() == 0){
         unregisterGlobalBroadcast();

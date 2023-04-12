@@ -19,14 +19,16 @@ export interface Spec extends TurboModule {
     getIsSupported(): boolean;
 
     /**
-     * Subscribe for events such "Turn on"/"Turn off" on phone peripheral.
+     * Add a event listener to native.
+     * @param eventName
      */
-    enableStateChange(): void;
+    addListener(eventName: string): void;
 
     /**
-     * Unsubscribe for events such "Turn on"/"Turn off" on phone peripheral.
+     * Remove a event listener to native.
+     * @param eventName
      */
-    disableStateChange(): void;
+    removeListener(eventName: string): void;
 }
 
 export default TurboModuleRegistry.get<Spec>(
