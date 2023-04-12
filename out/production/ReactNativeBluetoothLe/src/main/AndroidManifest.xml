@@ -1,0 +1,26 @@
+<!--
+Bluetooth Permissions
+https://developer.android.com/guide/topics/connectivity/bluetooth/permissions
+Supports android version Android 8.0 (API level 26) or higher
+-->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.rnbluetoothle">
+    <!-- Minimum setup to work with bluetooth low energy -->
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+    <uses-sdk android:minSdkVersion="26" />
+
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+</manifest>
