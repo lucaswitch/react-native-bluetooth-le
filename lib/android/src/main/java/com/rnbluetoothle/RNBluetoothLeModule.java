@@ -70,8 +70,8 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     if (globalReceiver == null) {
       globalReceiver = new GlobalReceiver(this.reactContext);
       reactContext.registerReceiver(
-        this.globalReceiver,
-        this.globalReceiver.createIntentFilter()
+        globalReceiver,
+        GlobalReceiver.createIntentFilter()
       );
       Log.v("Bluetooth", "\"GlobalReceiver\" registered receiver.");
     }
@@ -81,10 +81,9 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
    * Stops broadcast receiver.
    */
   private void unregisterGlobalBroadcast() {
-    if (this.bluetoothStateReceiver != null) {
-      this.reactContext.unregisterReceiver(this.bluetoothStateReceiver);
-      this.bluetoothStateReceiver = null;
-      Log.v("Bluetooth", "\"bluetoothStateReceiver\" unregistered receiver.");
+    if (globalReceiver != null) {
+      reactContext.unregisterReceiver(this.bluetoothStateReceiver);
+      globalReceiver = null;
     }
   }
 
@@ -92,8 +91,19 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
    * Add a JS module event listener.
    */
   @ReactMethod
-  public void addListener(String eventName) {}
+  public void addListener(String eventName) {
+    registerGlobalBroadcast();
+    globalReceiver.enableEvent(eventName);
+  }
 
+  /**
+   * Remove a JS module event listener.
+   */
   @ReactMethod
-  public void removeListeners(Integer count) {}
+  public void removeListener(String){
+    globalReceiver.disableEvent(eventName);
+    if(globalReceiver.getEventsCount() == 0){
+        unregisterGlobalBroadcast();
+    }
+  }
 }
