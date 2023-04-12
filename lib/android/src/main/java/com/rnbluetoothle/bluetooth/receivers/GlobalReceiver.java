@@ -21,8 +21,8 @@ import com.facebook.react.bridge.ReactContext;
 public class GlobalReceiver extends BroadcastReceiver {
     private Runnable callback;
 
-    public GlobalReceiver(Runnable callback) {
-        this.callback = callback;
+    public GlobalReceiver(ReactApplicationContext reactContext) {
+        // this.callback = callback;
     }
 
     @Override
@@ -35,8 +35,8 @@ public class GlobalReceiver extends BroadcastReceiver {
             WritableMap payload = Arguments.createMap();
             payload.putString("status", status);
 
-            Log.v("Bluetooth", context.getClass().getName());
-            this.callback.run("onStageChange", payload);
+            // Log.v("Bluetooth", context.getClass().getName());
+            // this.callback.run("onStageChange", payload);
         }
     }
 
