@@ -100,7 +100,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
    * Remove a JS module event listener.
    */
   @ReactMethod
-  public void removeListener(String){
+  public void removeListener(String eventName){
     globalReceiver.disableEvent(eventName);
     if(globalReceiver.getEventsCount() == 0){
         unregisterGlobalBroadcast();
