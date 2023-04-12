@@ -90,7 +90,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
   /**
    * Add a JS module event listener.
    */
-  @ReactMethod
+  @Override
   public void addListener(String eventName) {
     registerGlobalBroadcast();
     globalReceiver.enableEvent(eventName);
@@ -99,8 +99,8 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
   /**
    * Remove a JS module event listener.
    */
-  @ReactMethod
-  public void removeListener(String){
+  @Override
+  public void removeListener(String eventName){
     globalReceiver.disableEvent(eventName);
     if(globalReceiver.getEventsCount() == 0){
         unregisterGlobalBroadcast();
