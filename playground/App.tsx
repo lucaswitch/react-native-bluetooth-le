@@ -1,18 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView} from 'react-native';
-import {Button} from 'react-native';
-import {Bluetooth} from 'react-native-bluetooth-le/js/index';
+import React, { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native";
+import { Button } from "react-native";
+import { Bluetooth } from "react-native-bluetooth-le/js/index";
 
 function App(): JSX.Element {
   /**
    * Turn on bluetooth peripheral when user interacts.
    */
-  const handleOnTurnOnBluetooth = () => {};
+  const handleOnTurnOnBluetooth = () => {
+  };
 
   useEffect(() => {
-    console.log('running');
-    const unsubscribe = Bluetooth.onStateChange(function ({status}) {
-      console.log('status', status);
+    const unsubscribe = Bluetooth.onStateChange(({ status }) => {
+      console.info(status)
     });
     return () => {
       unsubscribe();

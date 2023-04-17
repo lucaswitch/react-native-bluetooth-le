@@ -1,6 +1,5 @@
 import type {TurboModule} from 'react-native/Libraries/TurboModule/RCTExport';
 import {TurboModuleRegistry} from 'react-native';
-import {StatusChange} from "./types";
 
 export interface Spec extends TurboModule {
     /**
