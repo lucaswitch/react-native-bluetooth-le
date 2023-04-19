@@ -43,3 +43,41 @@ turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
 ### Docs
 
     You can find more on our website.
+
+## Capabilites
+
+- Bluetooth Adapter
+    - Verify if device has a bluetooth adapter available and is bluetooth low energy capable.
+    - Verify if bluetooth adapter is currently enabled.
+    - Listen to bluetooth peripheral events such *turn off*, *turn on*.
+- GATT (Generic Attribute Profile) Operations
+    - Discover
+        - Allow the device to find out nearby devices.
+    - Bonding
+        - Allow *bond* with a bluetooth peripheral.
+        - Allow *unbound* with *bounded* bluetooth peripheral.
+        - Listen to *bound* and *unbound* events.
+    - Connection
+        - Allow connect to bluetooth peripheral.
+        - Allow disconnect from connected bluetooth peripheral.
+        - Listen to "*connect*" and "*disconnect*" events.
+    - Device profile
+        - Allow discover bluetooth peripheral services and it characteristics.
+        - Characteristic
+            - Receive notifications from a device service and characteristic.
+            - Send data to device characteristic using plain bytes structure.
+            - Listen to device characteristic data using plain bytes structure.
+## Changelog
+    - 0.1 (Beta)
+        Add support to basic capabilities
+## Contributing
+
+This library is still under development and should not be used on real cases for instance.
+```bash
+  cd playground;
+  yarn add ../lib;
+  cd android;
+  ./gradlew generateCodegenArtifactsFromSchema;
+  cd ..;
+  yarn run android --active-arch-only;
+```
