@@ -47,12 +47,12 @@ turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
 ## Capabilites
 
 - Bluetooth Adapter
-    - Verify if device has a bluetooth adapter available and is bluetooth low energy capable.
-    - Verify if bluetooth adapter is currently enabled.
-    - Listen to bluetooth peripheral events such *turn off*, *turn on*.
+    - Verify if device has a bluetooth adapter available and is bluetooth low energy capable. [Android Supported]
+    - Verify if bluetooth adapter is currently enabled. [Android Supported]
+    - Listen to bluetooth peripheral events such *turn off*, *turn on*. [Android Supported]
 - GATT (Generic Attribute Profile) Operations
     - Discover
-        - Allow the device to find out nearby devices.
+        - Allow the device to find out nearby devices. [Android Supported]
     - Bonding
         - Allow *bond* with a bluetooth peripheral.
         - Allow *unbound* with *bounded* bluetooth peripheral.
