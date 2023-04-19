@@ -112,6 +112,7 @@ export const Bluetooth = {
     },
     /**
      * Listen for bluetooth low energy nearby devices through the procedure called "discovery".
+     * The devices will not be duplicated, the device is distinguished by "address" attributes of devices.
      * @param callback
      */
     onDiscovery(callback: (devices: BluetoothDevice[]) => void): Function {
@@ -128,14 +129,12 @@ export const Bluetooth = {
             bluetoothEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
             eListener = bluetoothEventEmitter.addListener(eventName, (device: BluetoothDevice) => {
                 if (device.address === null) {
-                    console.log('device is null', device.address)
                     return;
                 }
                 for (const i in devices) {
                     if (devices[i].address == device.address) {
                         devices[i] = {...devices[i], ...device};
                         devices.sort((a, b) => b.rssi - a.rssi);
-                        console.log('devices', devices)
                         callback(devices);
                         return;
                     }
