@@ -1,32 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native";
-import { Button } from "react-native";
-import { Bluetooth } from "react-native-bluetooth-le/js/index";
+import {SafeAreaView, StatusBar} from "react-native";
+import {BluetoothState, Discovery} from "./src/components/demo";
 
 function App(): JSX.Element {
-  /**
-   * Turn on bluetooth peripheral when user interacts.
-   */
-  const handleOnTurnOnBluetooth = () => {
-  };
-
-  useEffect(() => {
-    const unsubscribe = Bluetooth.onStateChange(({ status }) => {
-      console.info(status)
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  return (
-    <SafeAreaView>
-      <Button
-        title="Tentar ligar o bluetooth"
-        onPress={handleOnTurnOnBluetooth}
-      />
-    </SafeAreaView>
-  );
+    return (
+        <SafeAreaView style={{flex: 1, backgroundColor: '#EAEAEA', padding: 6, gap: 10}}>
+            <StatusBar backgroundColor="#EAEAEA" barStyle="dark-content"/>
+            <BluetoothState/>
+            <Discovery/>
+        </SafeAreaView>
+    );
 }
 
 export default App;
