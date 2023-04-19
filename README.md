@@ -4,7 +4,8 @@
 
 **react-native-bluetooth-le** library stands for implement commons bluetooth low energy specifications in react-native
 ecosystem.\
-It uses the new react-native **turbo module architecture** subscribe/unsubscribe pattern approach to handle bluetooth
+It uses the new react-native **turbo module architecture** providing a typescript/javascript api with easy
+subscribe/unsubscribe pattern approach to handle bluetooth
 events and provides **foreground mode** transmission
 on android.
 
@@ -40,4 +41,5 @@ turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
 ```
 
 ### Docs
+
     You can find more on our website.
