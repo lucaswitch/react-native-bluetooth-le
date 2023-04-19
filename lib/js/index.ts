@@ -19,10 +19,10 @@ export const Bluetooth = {
      * Use "getIsSupported" method to check if the current running device has a Bluetooth Low Energy Adapter
      */
     getIsEnabled(): boolean {
-        if (BluetoothModule) {
-            return BluetoothModule.getIsEnabled();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return false;
+        return BluetoothModule.getIsEnabled();
     },
 
     /**
@@ -33,10 +33,10 @@ export const Bluetooth = {
      *  Make sure that the permission "android.permission.ACCESS_FINE_LOCATION" is granted.
      */
     getIsLocationEnabled(): boolean {
-        if (BluetoothModule) {
-            return BluetoothModule.getIsLocationEnabled();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return false;
+        return BluetoothModule.getIsLocationEnabled();
     },
 
     /**
@@ -46,10 +46,10 @@ export const Bluetooth = {
      *   To avoid it call "getIsSupported" to verify if has indeed a bluetooth adapter before calling this method.
      */
     getName(): string {
-        if (BluetoothModule) {
-            return BluetoothModule.getAdapterName();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return "";
+        return BluetoothModule.getAdapterName();
     },
 
     /**
@@ -59,10 +59,10 @@ export const Bluetooth = {
      *   To avoid it call "getIsSupported" to verify if has indeed a bluetooth adapter before calling this method.
      */
     getAddress(): string {
-        if (BluetoothModule) {
-            return BluetoothModule.getAdapterAddress();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return "";
+        return BluetoothModule.getAdapterAddress();
     },
 
     /**
@@ -71,10 +71,46 @@ export const Bluetooth = {
      *  Make sure to ask the android.bluetooth needed permissions.
      */
     getIsSupported(): boolean {
-        if (BluetoothModule) {
-            return BluetoothModule.getIsSupported();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return false;
+        return BluetoothModule.getIsSupported();
+    },
+
+
+    /**
+     * Create a bluetooth device bond.
+     * This method appears to be  syncronous but you must use "onDeviceChange" to know wheter the device is bounded.
+     * @param address It must be a valid device address.
+     */
+    createDeviceBond(address: string): void {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
+
+
+    },
+
+    /**
+     * Gets wheter device attributes has changed.
+     * @param device
+     * @param callback
+     */
+    onDeviceBond(device: BluetoothDevice, callback: (device: BluetoothDevice) => void): Function {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
+
+        const event = 'rnbluetoothle.onDeviceBondChange';
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
+        const eventListener = bluetoothEventEmitter.addListener(event, (device: BluetoothDevice) => {
+
+        });
+        BluetoothModule.addListener(event);
+        return function () {
+            BluetoothModule.removeListener(event);
+            eventListener.remove();
+        }
     },
 
     /**
@@ -83,76 +119,67 @@ export const Bluetooth = {
      * @param callback
      */
     onStateChange(callback: (data: StatusChange) => void): Function {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
         if (typeof callback !== 'function') {
             throw new Error("The callback of onStateChange must be a function that handles bluetooth state change.");
         }
-        let eListener = null;
-        let bluetoothEventEmitter: NativeEventEmitter | null = null;
-        const eventName = 'rnbluetoothle.onStateChange';
 
-        if (BluetoothModule) {
-            bluetoothEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
-            BluetoothModule.addListener(eventName);
-            eListener = bluetoothEventEmitter.addListener(eventName, callback)
-            // Trigger on load first time.
-            if (this.getIsEnabled()) {
-                callback({status: 'on'})
-            } else {
-                callback({status: 'off'})
-            }
+        const event = 'rnbluetoothle.onStateChange';
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
+
+        BluetoothModule.addListener(event);
+        const eventListener = bluetoothEventEmitter.addListener(event, callback);
+        // Trigger on load first time.
+        if (this.getIsEnabled()) {
+            callback({status: 'on'})
+        } else {
+            callback({status: 'off'})
         }
         return function () {
-            if (BluetoothModule) {
-                BluetoothModule.removeListener(eventName);
-            }
-            if (eListener) {
-                eListener.remove();
-            }
+            BluetoothModule.removeListener(event);
+            eventListener.remove();
         }
     },
+
     /**
      * Listen for bluetooth low energy nearby devices through the procedure called "discovery".
      * The devices will not be duplicated, the device is distinguished by "address" attributes of devices.
      * @param callback
      */
     onDiscovery(callback: (devices: BluetoothDevice[]) => void): Function {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
         if (typeof callback !== 'function') {
             throw new Error("The callback of onDiscover must be a function that handles bluetooth discovery.");
         }
 
-        let bluetoothEventEmitter: NativeEventEmitter | null = null;
-        const eventName = 'rnbluetoothle.onDiscovery';
+        const event = 'rnbluetoothle.onDiscovery';
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
         const devices: BluetoothDevice[] = [];
-        let eListener = null;
-
-        if (BluetoothModule) {
-            bluetoothEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
-            eListener = bluetoothEventEmitter.addListener(eventName, (device: BluetoothDevice) => {
-                if (device.address === null) {
+        const eventListener = bluetoothEventEmitter.addListener(event, (device: BluetoothDevice) => {
+            if (device.address === null) {
+                return;
+            }
+            for (const i in devices) {
+                if (devices[i].address == device.address) {
+                    devices[i] = {...devices[i], ...device};
+                    devices.sort((a, b) => b.rssi - a.rssi);
+                    callback(devices);
                     return;
                 }
-                for (const i in devices) {
-                    if (devices[i].address == device.address) {
-                        devices[i] = {...devices[i], ...device};
-                        devices.sort((a, b) => b.rssi - a.rssi);
-                        callback(devices);
-                        return;
-                    }
-                }
+            }
 
-                devices.push(device);
-                devices.sort((a, b) => b.rssi - a.rssi);
-                callback(devices);
-            });
-            BluetoothModule.addListener(eventName);
-        }
+            devices.push(device);
+            devices.sort((a, b) => b.rssi - a.rssi);
+            callback(devices);
+        });
+        BluetoothModule.addListener(event);
         return function () {
-            if (BluetoothModule) {
-                BluetoothModule.removeListener(eventName);
-            }
-            if (eListener) {
-                eListener.remove();
-            }
+            BluetoothModule.removeListener(event);
+            eventListener.remove();
         }
     }
 }
