@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap');
+
+img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+
+html {
+    font-family: "Roboto", sans-serif;
+}
