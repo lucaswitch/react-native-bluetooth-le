@@ -37,7 +37,7 @@ Using npm
 ### Imperative API
 
 ```js
-import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible} from 'react-native-bluetooth-le';
+import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible, onDiscovery, onStateChange} from 'react-native-bluetooth-le';
 
 turnOnBluetoothIfPossible(); // The bluetooth pheripheral was turned on.
 turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
