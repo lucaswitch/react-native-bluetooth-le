@@ -68,13 +68,13 @@ unsubscribe();
 ## Capabilites
 
 - Bluetooth Adapter
-    - Verify if device has a bluetooth adapter available and is bluetooth low energy capable.
-    - Verify if bluetooth adapter is currently enabled.
-    - Listen to bluetooth peripheral events such *turn off*, *turn on*.
-- GATT (Generic Attribute Profile) Operations
-    - Discover
-        - Allow the device to find out nearby devices.
-    - Bonding
+    - Verify if device has a bluetooth adapter available and is bluetooth low energy capable. [**Supported**]
+    - Verify if bluetooth adapter is currently enabled. [**Supported**]
+    - Listen to bluetooth peripheral events such *turn off*, *turn on*. [**Supported**]
+- GATT (Generic Attribute Profile) Operations 
+    - Discover [**Supported**]
+        - Allow the device to find out nearby devices.  [**Supported**]
+    - Bonding [**Under development**]
         - Allow *bond* with a bluetooth peripheral.
         - Allow *unbound* with *bounded* bluetooth peripheral.
         - Listen to *bound* and *unbound* events.
