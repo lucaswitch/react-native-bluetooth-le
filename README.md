@@ -169,8 +169,7 @@ You can find more on our website. :)
 
 ## Contributing
 
-Rules:
-  - Respect human rights and always ship good code.
+Rules:  
   - Make sure to consider platform compability and differences.
   - Avoid overhead operations that could slow down perfomance.
   - Never persist state.
