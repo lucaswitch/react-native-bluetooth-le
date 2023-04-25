@@ -41,6 +41,15 @@ import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible} from 'react-nativ
 
 turnOnBluetoothIfPossible(); // The bluetooth pheripheral was turned on.
 turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
+
+// Listen for bluetooth power state change
+const unsubscribe = onStateChange(()=>{
+
+})
+
+// Later when does not need to listen this event anymore...
+unsubscribe();
+
 ```
 
 ### Docs
