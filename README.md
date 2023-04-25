@@ -73,7 +73,7 @@ unsubscribe();
 
 ```
 
-#### Gets whether bluetooth adapter has low energy support.
+#### Gets whether bluetooth adapter has low energy support
 
   In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
   
@@ -83,7 +83,7 @@ unsubscribe();
   getIsSupported(); // true or false, true if is current device supports bluetooth low energy operations.
 ```
 
-#### Gets bluetooth adapter name and address.
+#### Gets bluetooth adapter name and address
 
   In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
   
