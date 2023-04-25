@@ -74,8 +74,6 @@ unsubscribe();
 ```
 
 #### Gets whether bluetooth adapter has low energy support
-
-  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
   
 ```js
   import {getIsSupported} from 'react-native-bluetooth-le';
@@ -85,7 +83,7 @@ unsubscribe();
 
 #### Gets bluetooth adapter name and address
 
-  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
+  For the user security, make sure to ask the user common bluetooth permissions.
   
 ```js
   import {getName, getAddress} from 'react-native-bluetooth-le';
@@ -104,6 +102,41 @@ unsubscribe();
   getIsLocationEnabled(); // "on" or "off"
 
 ```
+
+#### Listen to bluetooth adapter sudden state change
+
+  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
+  
+```js
+  import {onStateChange} from 'react-native-bluetooth-le';
+
+  const unsubscribe = onStateChange(({status})=>{
+    console.log(status): // "on" or "off"
+  }); 
+
+  // Make sure to "unsubscribe" this event later to avoid listen unnecessary state changes.
+  
+  unsubscribe(); // Remove registered listener.
+```
+
+#### Listen bluetooth discovery and find nearby devices
+
+  Starts to listen nearby devices using "bluetooth scan".
+  Make sure to enable this functionality on your app for a small period of time since it's consumes too much battery.
+  Android Notes:
+      Make sure to ask the user to enable location since bluetooth scan operations can expose user location to nearby devices. 
+```js
+  import {onDiscovery} from 'react-native-bluetooth-le';
+
+ 
+  const unsubscribe = onDiscovery((devices = [])=>{
+     console.log(devices); // This devices is filtered by it's mac address and never will be sent repeated.
+  }); 
+
+  // Make sure to "unsubscribe" this event later to avoid listen discovery.  
+  unsubscribe(); // Remove registered listener.
+```
+
   
 You can find more on our website. :)
 
