@@ -62,8 +62,50 @@ unsubscribe();
 ```
 
 ### Docs
+  The following methods are provided:
+    
+#### Whether bluetooth adapter is enabled
+    
+```js
+  import {getIsEnabled} from 'react-native-bluetooth-le';
 
-    You can find more on our website.
+  getIsEnabled(); // "on" or "off"
+
+```
+
+#### Gets whether bluetooth adapter has low energy support.
+
+  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
+  
+```js
+  import {getIsSupported} from 'react-native-bluetooth-le';
+
+  getIsSupported(); // true or false, true if is current device supports bluetooth low energy operations.
+```
+
+#### Gets bluetooth adapter name and address.
+
+  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
+  
+```js
+  import {getName, getAddress} from 'react-native-bluetooth-le';
+
+  getName(); // "Samsung S21..."
+  getAddress(); // "00:00:00:00:21" Mac address for Android and UUID for some most recent IOS versions.
+```
+
+#### Gets whether location is enabled 
+
+  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
+  
+```js
+  import {getIsLocationEnabled} from 'react-native-bluetooth-le';
+
+  getIsLocationEnabled(); // "on" or "off"
+
+```
+  
+You can find more on our website. :)
 
 ## Capabilites
 
