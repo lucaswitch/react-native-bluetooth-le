@@ -36,7 +36,7 @@ Using npm
 
 ### Imperative API
 
-All bluetooth operations are provided using a functional programming paradigm approach, in this paradigm we avoid persisting state and mutate it.
+All bluetooth operations are provided using a **event driven** and **functional programming paradigm approach**, in this paradigm we avoid persisting state and mutate it.
 ```js
 import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible, onDiscovery, onStateChange} from 'react-native-bluetooth-le';
 
