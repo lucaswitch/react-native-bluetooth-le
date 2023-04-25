@@ -42,7 +42,7 @@ import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible} from 'react-nativ
 turnOnBluetoothIfPossible(); // The bluetooth pheripheral was turned on.
 turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
 
-/* Listen for bluetooth power state change */
+/** Listen for bluetooth power state change */
 const unsubscribe = onStateChange(({status})=>{
   console.log(status); // "on" or "off"
 })
@@ -51,7 +51,7 @@ const unsubscribe = onStateChange(({status})=>{
 unsubscribe();
 
 
-/* Listen bluetooth discovery event  */
+/** Listen bluetooth discovery event  */
 const unsubscribe = onDiscovery((device)=>{
   console.log(device);
 })
