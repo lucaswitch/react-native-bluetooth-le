@@ -39,8 +39,8 @@ Using npm
 ```js
 import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible, onDiscovery, onStateChange} from 'react-native-bluetooth-le';
 
-turnOnBluetoothIfPossible(); // The bluetooth pheripheral was turned on.
-turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
+turnOnBluetoothIfPossible(); // The bluetooth adapter was turned on.
+turnOffBluetoothIfPossible(); // The bluetooth adapter was turned off.
 
 /** Listen for bluetooth power state change */
 const unsubscribe = onStateChange(({status})=>{
