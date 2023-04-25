@@ -169,11 +169,13 @@ You can find more on our website. :)
 
 ## Contributing
 
-Rules:  
+When opening issue make sure to provide all platform information: SDK, Device Number, Android or IOs version and error stack trace.
+
+Some things to consider when shipping code: 
   - Make sure to consider platform compability and differences.
   - Avoid overhead operations that could slow down perfomance.
   - Never persist state.
-  - When opening issue make sure to provide all platform information: SDK, Device Number, Android or IOs version and error stack trace.
+  - Avoid breaking compability in functionality.
 ```bash
   cd playground;
   yarn add ../lib;
