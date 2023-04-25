@@ -73,35 +73,6 @@ turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
 ## Changelog
     - 0.1 (Beta)
         Add support to basic capabilities
-## Contributing
-
-This library is still under development and should not be used on real cases for instance.
-```bash
-  cd playground;
-  yarn add ../lib;
-  cd android;
-  ./gradlew generateCodegenArtifactsFromSchema;
-  cd ..;
-  yarn run android --active-arch-only;
-```
-
-## Capabilites
-  - Bluetooth Adapter
-    - Listen to bluetooth peripheral events such Turn Off and Turn On.
-    - Get current Bluetooth peripheral status.
-   - GATT
-    - Discovery 
-      - Start discovery and listen to scan events.
-      - Disable discovery and unsubscribe to scan events.
-    - Bonding
-      - Bond with a device.   
-      - Connect to device.
-      - Discover device services.
-      - Discover service characteristics.
-      - Listen to disconnection from a device.     
-  - Transmission
-      - Receive notifications from a device service and characteristic.
-      - Send data to device.
 
 ## Contributing
 
