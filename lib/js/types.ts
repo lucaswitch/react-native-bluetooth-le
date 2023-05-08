@@ -7,7 +7,7 @@ export type BluetoothDevice = {
     name: string | null,
     address: string,
     type: "le" | "dual" | "unknown",
-    bond: "bonded" | "none",
+    bond: "bonding" | "none",
     rssi: number,
     dbm: number
 };

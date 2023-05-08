@@ -1,25 +1,23 @@
 import {Bluetooth, BluetoothDevice} from "react-native-bluetooth-le";
 import {useCallback, useEffect, useState} from "react";
 import {
-    Button,
     FlatList,
     PermissionsAndroid,
     Platform,
     Text
 } from "react-native";
 import {Card} from "../../card";
-import {ButtonGroup, Container, ListItem, ListItemInside} from "./style";
+import {Container, ListItem, ListItemInside} from "./style";
 import {OverlineText} from '../../texts'
 import {BondingButton} from "../bonding-button";
 
 /**
- * Bluetooth discovery demo.
+ * Bluetooth bonding demo.
  * @constructor
  */
-export function Discovery() {
+export function Bonding() {
     const [allowed, setAllowed] = useState(false);
     const [devices, setDevices] = useState<BluetoothDevice[]>([])
-    const [discovering, setDiscovering] = useState<boolean>(false);
     const [enabled, setEnabled] = useState<boolean>(false)
 
     /**
@@ -58,32 +56,12 @@ export function Discovery() {
     }, [])
 
     /**
-     * Starts bluetooth discovery.
-     */
-    const startDiscovery = useCallback(async () => {
-        if (!allowed) {
-            await askBluetoothPermissions();
-            setAllowed(true);
-        }
-        if (!enabled) {
-            setEnabled(true);
-        }
-    }, [enabled, allowed])
-
-    /**
-     * Stops discovery.
-     */
-    const stopDiscovery = useCallback(() => {
-        // In this point we already know that scan was previously running so the permissions to scan must be ok.
-        setEnabled(false);
-    }, [enabled])
-
-    /**
      * Renders a device item.
      */
     const renderItem = useCallback((props: { index: number, item: BluetoothDevice }) => {
         const {address, name, rssi, dbm, bond} = props.item;
 
+        console.log('bond', bond)
         return <ListItem key={props.index}>
             <ListItemInside>
                 <OverlineText style={{color: '#000'}}>
@@ -95,36 +73,23 @@ export function Discovery() {
     }, [])
 
     useEffect(() => {
-        // Handle discovery.
-        if (allowed && enabled) {
-            const unsubscribe = Bluetooth.onDiscovery((nearbyDevices) => {
-
-                setDevices([...nearbyDevices]);
-            })
-            setDiscovering(true);
-            return () => {
-                setDiscovering(false);
-                setDevices([])
-                unsubscribe();
-            }
-        }
-    }, [enabled, allowed])
+        askBluetoothPermissions().then(() => {
+            const bondedDevices = Bluetooth.getBondedDevices();
+            setDevices(bondedDevices);
+        })
+    }, [askBluetoothPermissions])
 
 
     return <Card>
         <Container>
-            <Text>Bluetooth devices</Text>
-            <OverlineText>{discovering ? 'Perfoming nearby devices discovery...' : 'Press "Find devices to start discovery."'}</OverlineText>
+            <Text>Bluetooth paired devices</Text>
+            <OverlineText>- This is the current paired devices</OverlineText>
             <FlatList
                 data={devices}
                 renderItem={renderItem}
                 scrollEnabled={true}
                 style={{height: 200, marginTop: 10}}
             />
-            <ButtonGroup>
-                {!discovering ? <Button title="Find devices" onPress={startDiscovery}/> :
-                    <Button title="Cancel" onPress={stopDiscovery}/>}
-            </ButtonGroup>
         </Container>
     </Card>
 

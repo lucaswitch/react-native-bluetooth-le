@@ -1,18 +1,17 @@
 package com.rnbluetoothle.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
-
-import androidx.annotation.Nullable;
-
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Build;
+
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 
 public class BluetoothState {
 
-    private BluetoothAdapter adapter;
+    private final BluetoothAdapter adapter;
 
     public BluetoothState(ReactApplicationContext context) {
         this.adapter = getSystemDefaultAdapter(context);
