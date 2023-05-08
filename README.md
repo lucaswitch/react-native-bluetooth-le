@@ -36,30 +36,125 @@ Using npm
 
 ### Imperative API
 
+All bluetooth operations are provided using a **event driven** and **functional programming paradigm approach**, in this paradigm we avoid persisting state and mutate it.
 ```js
-import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible} from 'react-native-bluetooth-le';
+import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible, onDiscovery, onStateChange} from 'react-native-bluetooth-le';
 
-turnOnBluetoothIfPossible(); // The bluetooth pheripheral was turned on.
-turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
+turnOnBluetoothIfPossible(); // The bluetooth adapter was turned on.
+turnOffBluetoothIfPossible(); // The bluetooth adapter was turned off.
+
+/** Listen for bluetooth power state change */
+const unsubscribe = onStateChange(({status})=>{
+  console.log(status); // "on" or "off"
+})
+
+// Later when does not need to listen this event anymore...
+unsubscribe();
+
+
+/** Listen bluetooth discovery event  */
+const unsubscribe = onDiscovery((device)=>{
+  console.log(device);
+})
+
+// Later when does not need to listen this event anymore...
+unsubscribe();
+
 ```
 
 ### Docs
+  The following methods are provided:
+    
+#### Whether bluetooth adapter is enabled
+    
+```js
+  import {getIsEnabled} from 'react-native-bluetooth-le';
 
-    You can find more on our website.
+  getIsEnabled(); // "on" or "off"
+
+```
+
+#### Gets whether bluetooth adapter has low energy support
+  
+```js
+  import {getIsSupported} from 'react-native-bluetooth-le';
+
+  getIsSupported(); // true or false, true if is current device supports bluetooth low energy operations.
+```
+
+#### Gets bluetooth adapter name and address
+
+  For the user security, make sure to ask the user common bluetooth permissions.
+  
+```js
+  import {getName, getAddress} from 'react-native-bluetooth-le';
+
+  getName(); // "Samsung S21..."
+  getAddress(); // "00:00:00:00:21" Mac address for Android and UUID for some most recent IOS versions.
+```
+
+#### Gets whether location is enabled 
+
+  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
+  
+```js
+  import {getIsLocationEnabled} from 'react-native-bluetooth-le';
+
+  getIsLocationEnabled(); // "on" or "off"
+
+```
+
+#### Listen to bluetooth adapter sudden state change
+
+  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
+  
+```js
+  import {onStateChange} from 'react-native-bluetooth-le';
+
+  const unsubscribe = onStateChange(({status})=>{
+    console.log(status): // "on" or "off"
+  }); 
+
+  // Make sure to "unsubscribe" this event later to avoid listen unnecessary state changes.
+  
+  unsubscribe(); // Remove registered listener.
+```
+
+#### Listen bluetooth discovery and find nearby devices
+
+  Starts to listen nearby devices using "bluetooth scan".
+  Make sure to enable this functionality on your app for a small period of time since it's consumes too much battery.
+  Android Notes:
+      Make sure to ask the user to enable location since bluetooth scan operations can expose user location to nearby devices. 
+```js
+  import {onDiscovery} from 'react-native-bluetooth-le';
+
+ 
+  const unsubscribe = onDiscovery((devices = [])=>{
+     console.log(devices); // This devices is filtered by it's mac address and never will be sent repeated.
+  }); 
+
+  // Make sure to "unsubscribe" this event later to avoid listen discovery.  
+  unsubscribe(); // Remove registered listener.
+```
+
+  
+You can find more on our website. :)
 
 ## Capabilites
 
 - Bluetooth Adapter
-    - Verify if device has a bluetooth adapter available and is bluetooth low energy capable. **[Android Supported]**
-    - Verify if bluetooth adapter is currently enabled. **[Android Supported]**
-    - Listen to bluetooth peripheral events such *turn off*, *turn on*. **[Android Supported]**
-- GATT (Generic Attribute Profile) Operations
-    - Discover
-        - Allow the device to find out nearby devices. **[Android Supported]**
-    - Bonding
+    - Verify if device has a bluetooth adapter available and is bluetooth low energy capable. [**Supported**]
+    - Verify if bluetooth adapter is currently enabled. [**Supported**]
+    - Listen to bluetooth peripheral events such *turn off*, *turn on*. [**Supported**]
+- GATT (Generic Attribute Profile) Operations 
+    - Discover [**Supported**]
+        - Allow the device to find out nearby devices.  [**Supported**]
+    - Bonding [**Supported**]
         - Allow *bond* with a bluetooth peripheral.
         - Allow *unbound* with *bounded* bluetooth peripheral.
         - Listen to *bound* and *unbound* events.
+        - Get the current bonded devices anytime.
     - Connection
         - Allow connect to bluetooth peripheral.
         - Allow disconnect from connected bluetooth peripheral.
@@ -73,38 +168,16 @@ turnOffBluetoothIfPossible(); // The bluetooth pheripheral was turned off.
 ## Changelog
     - 0.1 (Beta)
         Add support to basic capabilities
-## Contributing
-
-This library is still under development and should not be used on real cases for instance.
-```bash
-  cd playground;
-  yarn add ../lib;
-  cd android;
-  ./gradlew generateCodegenArtifactsFromSchema;
-  cd ..;
-  yarn run android --active-arch-only;
-```
-
-## Capabilites
-  - Bluetooth Adapter
-    - Listen to bluetooth peripheral events such Turn Off and Turn On.
-    - Get current Bluetooth peripheral status.
-   - GATT
-    - Discovery 
-      - Start discovery and listen to scan events.
-      - Disable discovery and unsubscribe to scan events.
-    - Bonding
-      - Bond with a device.   
-      - Connect to device.
-      - Discover device services.
-      - Discover service characteristics.
-      - Listen to disconnection from a device.     
-  - Transmission
-      - Receive notifications from a device service and characteristic.
-      - Send data to device.
 
 ## Contributing
 
+When opening issue make sure to provide all platform information: SDK, Device Number, Android or IOs version and error stack trace.
+
+Some things to consider when shipping code: 
+  - Make sure to consider platform compability and differences.
+  - Avoid overhead operations that could slow down perfomance.
+  - Never persist state.
+  - Avoid breaking compability in functionality.
 ```bash
   cd playground;
   yarn add ../lib;
