@@ -2,6 +2,7 @@
 import type {TurboModule} from 'react-native/Libraries/TurboModule/RCTExport';
 // @ts-ignore
 import {TurboModuleRegistry} from 'react-native';
+import {BluetoothDevice} from "./types";
 
 export interface Spec extends TurboModule {
     /**
@@ -52,6 +53,35 @@ export interface Spec extends TurboModule {
      *   To avoid it call "getIsSupported" to verify if has indeed a bluetooth adapter before calling this method.
      */
     getAdapterAddress(): string;
+
+    /**
+     * Gets whether de following device id is bonding.
+     * On Android:
+     *  The id is the remote device mac address.
+     */
+    getIsBonded(id: string): boolean
+
+    /**
+     * Creates a bond with device id.
+     * Promises fulfills when the bond is sucessfully started.
+     * @param id
+     * @return string Returns error message or empty string if successful.
+     */
+    bond(id: string): string;
+
+    /**
+     * Destroys a bond with device id.
+     * Promises fulfills when the bond is sucessfully destroyed.
+     * To bond with device look "bond" method.
+     * @param id
+     * @return string Returns error message or empty string if successful.
+     */
+    unBond(id: string): string;
+
+    /**
+     * Get the current bonding devices.
+     */
+    getBondedDevices(): BluetoothDevice[];
 
     /**
      * Add a event listener to native.

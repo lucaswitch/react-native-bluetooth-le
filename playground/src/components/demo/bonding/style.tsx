@@ -4,7 +4,7 @@ import {View} from "react-native";
 export const Container = styled(View)`
   display: flex;
   flex-direction: column;
-  height: 400px;
+  height: 120px;
 `;
 
 export const ListItem = styled(View)`
@@ -27,12 +27,3 @@ export const ListItemInside = styled(View)`
   display: flex;
   flex-direction: row;
 `;
-
-
-export const ButtonGroup = styled(View)`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin-top: 10px;
-`

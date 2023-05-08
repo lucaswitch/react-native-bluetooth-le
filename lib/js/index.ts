@@ -1,10 +1,12 @@
 import BluetoothModule from './NativeReactNativeBluetoothLe';
 import {BluetoothDevice, StatusChange} from "./types";
 // @ts-ignore
-import {NativeEventEmitter, NativeModules, Platform} from 'react-native';
+import {NativeEventEmitter, NativeModules, Platform, PermissionsAndroid} from 'react-native';
+import {BondError} from "./exceptions";
 
 export * from './types'
 
+// @ts-ignore
 /**
  * React Native Bluetooth Low Energy.
  * Licensed under MIT license definition.
@@ -19,10 +21,10 @@ export const Bluetooth = {
      * Use "getIsSupported" method to check if the current running device has a Bluetooth Low Energy Adapter
      */
     getIsEnabled(): boolean {
-        if (BluetoothModule) {
-            return BluetoothModule.getIsEnabled();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return false;
+        return BluetoothModule.getIsEnabled();
     },
 
     /**
@@ -33,10 +35,10 @@ export const Bluetooth = {
      *  Make sure that the permission "android.permission.ACCESS_FINE_LOCATION" is granted.
      */
     getIsLocationEnabled(): boolean {
-        if (BluetoothModule) {
-            return BluetoothModule.getIsLocationEnabled();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return false;
+        return BluetoothModule.getIsLocationEnabled();
     },
 
     /**
@@ -46,10 +48,10 @@ export const Bluetooth = {
      *   To avoid it call "getIsSupported" to verify if has indeed a bluetooth adapter before calling this method.
      */
     getName(): string {
-        if (BluetoothModule) {
-            return BluetoothModule.getAdapterName();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return "";
+        return BluetoothModule.getAdapterName();
     },
 
     /**
@@ -59,10 +61,10 @@ export const Bluetooth = {
      *   To avoid it call "getIsSupported" to verify if has indeed a bluetooth adapter before calling this method.
      */
     getAddress(): string {
-        if (BluetoothModule) {
-            return BluetoothModule.getAdapterAddress();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return "";
+        return BluetoothModule.getAdapterAddress();
     },
 
     /**
@@ -71,10 +73,10 @@ export const Bluetooth = {
      *  Make sure to ask the android.bluetooth needed permissions.
      */
     getIsSupported(): boolean {
-        if (BluetoothModule) {
-            return BluetoothModule.getIsSupported();
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
         }
-        return false;
+        return BluetoothModule.getIsSupported();
     },
 
     /**
@@ -83,78 +85,246 @@ export const Bluetooth = {
      * @param callback
      */
     onStateChange(callback: (data: StatusChange) => void): Function {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
         if (typeof callback !== 'function') {
             throw new Error("The callback of onStateChange must be a function that handles bluetooth state change.");
         }
-        let eListener = null;
-        let bluetoothEventEmitter: NativeEventEmitter | null = null;
-        const eventName = 'rnbluetoothle.onStateChange';
 
-        if (BluetoothModule) {
-            bluetoothEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
-            BluetoothModule.addListener(eventName);
-            eListener = bluetoothEventEmitter.addListener(eventName, callback)
-            // Trigger on load first time.
-            if (this.getIsEnabled()) {
-                callback({status: 'on'})
-            } else {
-                callback({status: 'off'})
-            }
+        const event = 'rnbluetoothle.onStateChange';
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
+
+        BluetoothModule.addListener(event);
+        const eventListener = bluetoothEventEmitter.addListener(event, callback);
+        // Trigger on load first time.
+        if (this.getIsEnabled()) {
+            callback({status: 'on'})
+        } else {
+            callback({status: 'off'})
         }
         return function () {
-            if (BluetoothModule) {
-                BluetoothModule.removeListener(eventName);
-            }
-            if (eListener) {
-                eListener.remove();
-            }
+            BluetoothModule.removeListener(event);
+            eventListener.remove();
         }
     },
+
     /**
      * Listen for bluetooth low energy nearby devices through the procedure called "discovery".
      * The devices will not be duplicated, the device is distinguished by "address" attributes of devices.
      * @param callback
      */
     onDiscovery(callback: (devices: BluetoothDevice[]) => void): Function {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
         if (typeof callback !== 'function') {
             throw new Error("The callback of onDiscover must be a function that handles bluetooth discovery.");
         }
 
-        let bluetoothEventEmitter: NativeEventEmitter | null = null;
-        const eventName = 'rnbluetoothle.onDiscovery';
+        const event = 'rnbluetoothle.onDiscovery';
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
         const devices: BluetoothDevice[] = [];
-        let eListener = null;
-
-        if (BluetoothModule) {
-            bluetoothEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
-            eListener = bluetoothEventEmitter.addListener(eventName, (device: BluetoothDevice) => {
-                if (device.address === null) {
+        const eventListener = bluetoothEventEmitter.addListener(event, (device: BluetoothDevice) => {
+            if (device.address === null) {
+                return;
+            }
+            for (const i in devices) {
+                if (devices[i].address == device.address) {
+                    devices[i] = {...devices[i], ...device};
+                    devices.sort((a, b) => b.rssi - a.rssi);
+                    callback(devices);
                     return;
                 }
-                for (const i in devices) {
-                    if (devices[i].address == device.address) {
-                        devices[i] = {...devices[i], ...device};
-                        devices.sort((a, b) => b.rssi - a.rssi);
-                        callback(devices);
-                        return;
+            }
+
+            devices.push(device);
+            devices.sort((a, b) => b.rssi - a.rssi);
+            callback(devices);
+        });
+        BluetoothModule.addListener(event);
+        return function () {
+            BluetoothModule.removeListener(event);
+            eventListener.remove();
+        }
+    },
+
+    /**
+     * Gets whether de following device id is bonding.
+     * On Android:
+     *  The id is the remote device mac address.
+     *  Make sure to ask the user the following permissions or your application:
+     *     - android.permission.BLUETOOTH in your AndroidManifest.xml file.
+     *     - android.permission.BLUETOOTH_ADMIN in your AndroidManifest.xml file.
+     *     - android.permission.BLUETOOTH_CONNECT before using this function on application code.
+     *  @param id
+     */
+    getIsBonded(id: string): boolean {
+        if (!id || id.length === 0) {
+            throw new Error('"id" must be a valid platform address for targeting bluetooth device.');
+        }
+
+        // Check platform specific permissions.
+        // @ts-ignore
+        if (__DEV__) {
+            // Android specific permissions
+            if (Platform.OS === 'android') {
+                const neededPermissions = ['android.permission.BLUETOOTH_CONNECT']
+                for (const permission of neededPermissions) {
+                    PermissionsAndroid.check(permission)
+                        .then((granted) => {
+                            if (!granted) {
+                                console.error(`Before calling "getIsBonded" function make sure to ask the user "${permission}" permission or it won't work or either return always "false" or break/crash the application.`);
+                            }
+                        });
+                }
+            }
+        }
+
+        return BluetoothModule.getIsBonded(id);
+    },
+
+    /**
+     * Tries to create a bond with the device, returns false if is not possible.
+     * Returns true if the bond has successfully started, not if is already is bonding.
+     * Note: To listen bonding state use "onBondChange" method.
+
+     * On Android:
+     *  The id is the remote device mac address.
+     *  Make sure to ask the user the following permissions or your application:
+     *      - android.permission.BLUETOOTH in your AndroidManifest.xml file.
+     *      - android.permission.BLUETOOTH_ADMIN in your AndroidManifest.xml file.
+     *      - android.permission.BLUETOOTH_CONNECT before using this function on application code.
+     *  @param id
+     * @throws Error if can't bond with the device.
+     */
+    // @ts-ignore
+    async bond(id: string): Promise<undefined> {
+        if (!id || id.length === 0) {
+            throw new Error('"id" must be a valid platform address for targeting bluetooth device.');
+        }
+
+        // Check platform specific permissions.
+        // @ts-ignore
+        if (__DEV__) {
+            // Android specific permissions
+            if (Platform.OS === 'android') {
+                const neededPermissions = ['android.permission.BLUETOOTH_CONNECT']
+                for (const permission of neededPermissions) {
+                    const granted = await PermissionsAndroid.check(permission);
+                    if (!granted) {
+                        throw new Error(`Before calling "bond" function make sure to ask the user "${permission}" permission or it won't work or either return always "false" or break/crash the application.`)
                     }
                 }
+            }
+        }
 
-                devices.push(device);
-                devices.sort((a, b) => b.rssi - a.rssi);
-                callback(devices);
-            });
-            BluetoothModule.addListener(eventName);
+        const error = BluetoothModule.bond(id)
+        if (error.length > 0) {
+            throw new BondError(error);
+        }
+    },
+
+    /**
+     * Tries unbond device, returns false if is not possible.
+     * Returns true if the unbond has successful.
+     * If already unbounded it returns true.
+     * Note: To listen bonding state use "onBondChange" method.
+     * On Android:
+     *    The id is the remote device mac address.
+     *    Make sure to ask the user the following permissions or your application:
+     *    - android.permission.BLUETOOTH in your AndroidManifest.xml file.
+     *    - android.permission.BLUETOOTH_ADMIN in your AndroidManifest.xml file.
+     *    - android.permission.BLUETOOTH_CONNECT before using this function on application code.
+     * @return boolean Whether the unbonding was successfully.
+     * @throws Error if can't unbond with the device.
+     */
+    // @ts-ignore
+    async unBond(id: string): Promise<boolean> {
+        if (!id || id.length === 0) {
+            throw new Error('"id" must be a valid platform address for targeting bluetooth device.');
+        }
+
+        // Check platform specific permissions.
+        // @ts-ignore
+        if (__DEV__) {
+            if (Platform.OS === 'android') {
+                const neededPermissions = ['android.permission.BLUETOOTH_CONNECT']
+                for (const permission of neededPermissions) {
+                    const granted = await PermissionsAndroid.check(permission);
+                    if (!granted) {
+                        throw new Error(`Before "unbound" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`)
+                    }
+                }
+            }
+        }
+
+        const error = BluetoothModule.unBond(id)
+        if (error.length > 0) {
+            throw new BondError(error);
+        }
+    },
+
+    /**
+     * Gets the current bonding devices.
+     * On Android:
+     *    The id is the remote device mac address.
+     *    Make sure to ask the user the following permissions or your application:
+     *    - android.permission.BLUETOOTH in your AndroidManifest.xml file.
+     *    - android.permission.BLUETOOTH_ADMIN in your AndroidManifest.xml file.
+     *    - android.permission.BLUETOOTH_CONNECT before using this function on application code.
+     * @return boolean Whether the unbonding was successfully.
+     */
+    getBondedDevices(): BluetoothDevice[] {
+        return BluetoothModule.getBondedDevices();
+    },
+
+    /**
+     * Gets wheter device attributes has changed.
+     *
+     * @param device
+     * @param callback
+     */
+    onBondChange(id: string, callback: (device: BluetoothDevice) => void): Function {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
+
+        // @ts-ignore
+        if (__DEV__) {
+            if (Platform.OS === 'android') {
+                const neededPermissions = ['android.permission.BLUETOOTH_CONNECT']
+                for (const permission of neededPermissions) {
+                    PermissionsAndroid.check(permission)
+                        .then((granted) => {
+                            if (!granted) {
+                                console.error(`Before "onBondChange" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`);
+                            }
+                        });
+                }
+            }
+        }
+
+        const events = [`rnbluetoothle.onBond/${id}`, `rnbluetoothle.onUnBound/${id}`];
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
+        const eventListeners = [];
+        for (const event of events) {
+            BluetoothModule.addListener(event);
+            eventListeners.push(
+                bluetoothEventEmitter.addListener(event, (device: BluetoothDevice) => {
+                    callback(device);
+                })
+            )
         }
         return function () {
-            if (BluetoothModule) {
-                BluetoothModule.removeListener(eventName);
+            for (const event of events) {
+                BluetoothModule.removeListener(event);
             }
-            if (eListener) {
-                eListener.remove();
+            for (const eventListener of eventListeners) {
+                eventListener.remove();
             }
         }
-    }
+    },
 }
 
 

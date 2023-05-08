@@ -15,11 +15,12 @@ import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.HashMap;
+
+import src.main.java.com.rnbluetoothle.bluetooth.JsBluetoothDevice;
 
 /**
  * Global receiver responsible to receive this library broadcast messages and emit to ReactNativeContext.
@@ -29,9 +30,9 @@ public class GlobalReceiver extends BroadcastReceiver {
     final String EVENT_ON_STATE_CHANGE = "rnbluetoothle.onStateChange";
     final String EVENT_ON_DISCOVERY = "rnbluetoothle.onDiscovery";
 
-    private BluetoothState bluetoothState;
-    private ReactApplicationContext reactContext;
-    private HashMap<String, String> enabledEvents = new HashMap<String, String>();
+    private final BluetoothState bluetoothState;
+    private final ReactApplicationContext reactContext;
+    private final HashMap<String, String> enabledEvents = new HashMap<String, String>();
 
     public GlobalReceiver(ReactApplicationContext context) {
         super();
@@ -59,6 +60,8 @@ public class GlobalReceiver extends BroadcastReceiver {
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         filter.addAction(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        filter.addAction(BluetoothDevice.ACTION_CLASS_CHANGED);
         return filter;
     }
 
@@ -192,45 +195,7 @@ public class GlobalReceiver extends BroadcastReceiver {
      */
     @Nullable
     private WritableMap createNativeMapForBluetoothDeviceDiscoveryIntent(Intent intent) {
-        WritableMap payload = Arguments.createMap();
-        BluetoothDevice device;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
-        } else {
-            device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        }
-
-        String deviceType;
-        switch (device.getType()) {
-            case BluetoothDevice.DEVICE_TYPE_LE:
-                deviceType = "le";
-                break;
-            case BluetoothDevice.DEVICE_TYPE_DUAL:
-                deviceType = "dual";
-                break;
-            case BluetoothDevice.DEVICE_TYPE_CLASSIC:
-                deviceType = "classic";
-                break;
-            default:
-                deviceType = "unknown";
-                break;
-        }
-        Short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
-        int dbm = rssi - 101;
-        payload.putString("id", intent.getStringExtra(BluetoothDevice.EXTRA_UUID));
-        payload.putString("name", device.getName());
-        payload.putString("address", device.getAddress());
-        payload.putInt("rssi", rssi);
-        payload.putInt("dbm", dbm);
-        payload.putString("type", deviceType);
-        // Bounding
-        int bondState = device.getBondState();
-        if (bondState == BluetoothDevice.BOND_BONDED) {
-            payload.putString("bond", "bonded");
-        } else {
-            payload.putString("bond", "none");
-        }
-
-        return payload;
+        JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);
+        return jsBluetoothDevice.getMap();
     }
 }
