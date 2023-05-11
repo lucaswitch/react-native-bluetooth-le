@@ -88,7 +88,7 @@ public class BondReceiver extends BroadcastReceiver {
      *
      * @return
      */
-    private static IntentFilter createIntentFilter() {
+    protected static IntentFilter createIntentFilter() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         return intentFilter;
