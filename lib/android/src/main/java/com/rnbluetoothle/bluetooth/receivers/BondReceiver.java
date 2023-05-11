@@ -1,57 +1,26 @@
 package com.rnbluetoothle.bluetooth.receivers;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter;
-
-import com.rnbluetoothle.bluetooth.BluetoothState;
 
 import src.main.java.com.rnbluetoothle.bluetooth.JsBluetoothDevice;
 
 /**
  * Responsible to deal with bonding state of device and emit it.
  */
-public class BondReceiver extends BroadcastReceiver {
+public class BondReceiver extends com.rnbluetoothle.bluetooth.receivers.DeviceEventsReceiver {
 
     final String EVENT_ON_BOND = "rnbluetoothle.onBond";
     final String EVENT_ON_UNBOND = "rnbluetoothle.onUnBound";
 
-    /**
-     * Target bluetooth device for this receiver.
-     */
-    BluetoothDevice bluetoothDevice;
-    /**
-     * React application context.
-     */
-    ReactApplicationContext reactContext;
 
     public BondReceiver(ReactApplicationContext context, String deviceId) {
-        super();
-        BluetoothState bluetoothState = new BluetoothState(context);
-
-        BluetoothAdapter adapter = bluetoothState.getSystemDefaultAdapter();
-        this.bluetoothDevice = adapter.getRemoteDevice(deviceId);
-
-        this.reactContext = context;
-    }
-
-
-    /**
-     * Sends event back to coupled JS Module.
-     */
-    private void sendJsModuleEvent(String event, WritableMap map) {
-        Log.v("Bluetooth", "Sending JS Module bond event " + event);
-        this.reactContext
-                .getJSModule(RCTDeviceEventEmitter.class)
-                .emit(event, map);
+        super(context, deviceId);
+        this.intentActions = new String[]{BluetoothDevice.ACTION_BOND_STATE_CHANGED};
     }
 
     /**
@@ -81,32 +50,5 @@ public class BondReceiver extends BroadcastReceiver {
                 this.sendJsModuleEvent(eventName, jsBluetoothDevice.getMap());
             }
         }
-    }
-
-    /**
-     * Gets the intent filter suitable for bonding events.
-     *
-     * @return
-     */
-    protected static IntentFilter createIntentFilter() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        return intentFilter;
-    }
-
-    /**
-     * Register this broadcast receiver.
-     */
-    public void register() {
-        reactContext.registerReceiver(this, createIntentFilter());
-        Log.v("Bluetooth", "\"BondReceiver\" registered for device " + this.bluetoothDevice.getAddress());
-    }
-
-    /**
-     * Unregister this broadcast receiver.
-     */
-    public void unregister() {
-        reactContext.unregisterReceiver(this);
-        Log.v("Bluetooth", "\"BondReceiver\" unregistered for device " + this.bluetoothDevice.getAddress());
     }
 }

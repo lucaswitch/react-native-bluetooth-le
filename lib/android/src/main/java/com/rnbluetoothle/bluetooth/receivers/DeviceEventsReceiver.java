@@ -43,7 +43,7 @@ public class DeviceEventsReceiver extends BroadcastReceiver {
      * Register this broadcast receiver.
      */
     public void register() {
-        this.reactContext.registerReceiver(this, createIntentFilter());
+        this.reactContext.registerReceiver(this, this.createIntentFilter());
         Log.v("Bluetooth", "\"BondReceiver\" registered for device " + this.bluetoothDevice.getAddress());
     }
 
