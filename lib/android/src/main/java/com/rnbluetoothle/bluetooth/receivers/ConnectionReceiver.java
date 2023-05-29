@@ -1,59 +1,53 @@
 package com.rnbluetoothle.bluetooth.receivers;
 
-import static android.os.Build.*;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build.VERSION;
-import android.util.Log;
 
-import src.main.java.com.rnbluetoothle.bluetooth.JsBluetoothDevice;
+import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDevice;
+import com.facebook.react.bridge.ReactApplicationContext;
 
 /**
- * Deals with a single device connection events.
+ * Deals with a single device connection and disconnection events.
  */
-public class ConnectionReceiver extends com.rnbluetoothle.bluetooth.receivers.DeviceEventsReceiver {
-    final String EVENT_ON_CONNECT = "rnbluetoothle.onConnect";
-    final String EVENT_ON_DISCONNECT = "rnbluetoothle.onDisconnect";
+public class ConnectionReceiver extends TransactionReceiver {
+    protected String EVENT_ON_CONNECT = "rnbluetoothle.onConnect/";
+    protected String EVENT_ON_DISCONNECT = "rnbluetoothle.onDisconnect/";
+    protected address;
 
-    public ConnectionReceiver(com.facebook.react.bridge.ReactApplicationContext context, String deviceId) {
-        super(context, deviceId);
+    public ConnectionReceiver(ReactApplicationContext context, String transactionId, String address) {
+        super(context, transactionId);
         this.intentActions = new String[]{
                 BluetoothDevice.ACTION_ACL_CONNECTED,
                 BluetoothDevice.ACTION_ACL_DISCONNECTED
         };
+        this.address = address;
+
+        this.EVENT_ON_CONNECT += transactionId;
+        this.EVENT_ON_DISCONNECT += transactionId;
     }
 
     /**
+     * On receive any connection or disconnection events.
+     *
      * @param context
      * @param intent
      */
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        BluetoothDevice device;
-        if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-            device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
-        } else {
-            device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        }
-
-        final String address = device.getAddress();
-        if (address.equals(device.getAddress())) {
+        BluetoothDevice device = JsBluetoothDevice.getDevice(intent);
+        if (this.address.equals(device.getAddress())) {
             String action = intent.getAction();
             if (action.equals(BluetoothDevice.ACTION_ACL_CONNECTED)) {
 
-                String eventName = this.EVENT_ON_CONNECT + "/" + address;
                 JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);
-                this.sendJsModuleEvent(eventName, jsBluetoothDevice.getMap());
-                Log.v("Bluetooth", "Remote " + address + "device just connected.");
+                this.sendJsModuleEvent(this.EVENT_ON_CONNECT, jsBluetoothDevice.getMap());
             } else if (action.equals(BluetoothDevice.ACTION_ACL_DISCONNECTED)) {
 
-                String eventName = this.EVENT_ON_DISCONNECT + "/" + address;
                 JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);
-                this.sendJsModuleEvent(eventName, jsBluetoothDevice.getMap());
-                Log.v("Bluetooth", "Remote " + address + "device just disconnected.");
+                this.sendJsModuleEvent(this.EVENT_ON_DISCONNECT, jsBluetoothDevice.getMap());
             }
         }
     }

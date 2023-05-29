@@ -2,28 +2,38 @@ package com.rnbluetoothle;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.location.LocationManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.WritableNativeArray;
-import com.facebook.react.bridge.Arguments;
-
 import com.rnbluetoothle.bluetooth.BluetoothState;
+
+import com.rnbluetoothle.bluetooth.receivers.DiscoveryReceiver;
+import com.rnbluetoothle.bluetooth.receivers.StateReceiver;
+import com.rnbluetoothle.bluetooth.receivers.BondsReceiver;
 import com.rnbluetoothle.bluetooth.receivers.BondReceiver;
-import com.rnbluetoothle.bluetooth.receivers.GlobalReceiver;
-import com.facebook.react.bridge.ReadableMap;
+import com.rnbluetoothle.bluetooth.receivers.ChangeReceiver;
+import com.rnbluetoothle.bluetooth.receivers.TransactionReceiver;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
-import src.main.java.com.rnbluetoothle.bluetooth.JsBluetoothDevice;
+import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDevice;
+import com.rnbluetoothle.bluetooth.bridge.JsDeviceGattCallback;
+
+import org.jetbrains.annotations.Nullable;
 
 public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
@@ -32,16 +42,11 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     private final ReactApplicationContext reactContext;
 
     /**
-     * Receiver that listen to Bluetooth core events in this module.
-     * This receiver only listen intents when the host is on responsive state and the UI is visible.
-     */
-    private GlobalReceiver globalReceiver;
-
-    /**
      * Hashmap of receivers which each key represents the device id.
      * Listen to bond events of specified device id.
      */
-    private HashMap<String, BondReceiver> deviceBondReceivers;
+    private HashMap<String, TransactionReceiver> transactionReceivers;
+    private HashMap<String, BluetoothGatt> deviceBluetoothGatts;
 
     RNBluetoothLeModule(ReactApplicationContext context) {
         super(context);
@@ -263,20 +268,46 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
      */
     @Override
     public void addListener(String eventName) {
-        if (eventName.startsWith("rnbluetoothle.onBond/") || eventName.startsWith("rnbluetoothle.onUnBound/")) {
+        this.removeListener(eventName);
 
-            // Register bond event only if does not exists.
-            String deviceId = eventName.substring(eventName.lastIndexOf("/") + 1);
-            if (!this.deviceBondReceivers.containsKey(deviceId)) {
-                BondReceiver bondReceiver = new BondReceiver(this.reactContext, deviceId);
-                bondReceiver.register();
-                this.deviceBondReceivers.put(deviceId, bondReceiver);
-            }
+        // Unregister the event if already exists.
+        if (this.transactionReceivers.containsKey(transactionId)) {
+            TransactionReceiver receiver = this.transactionReceivers.get(transactionId);
+            this.transactionReceivers.remove(transactionId);
+            receiver.unregister();
+        }
 
-        } else {
-            Log.v("Bluetooth", "Received addListener on event: " + eventName);
-            registerGlobalBroadcast();
-            globalReceiver.enableEvent(eventName);
+        eventName = eventName.substring(0, eventName.lastIndexOf("/"));
+        String transactionId = eventName.substring(eventName.lastIndexOf("/") + 1);
+        TransactionReceiver receiver;
+        switch (eventName) {
+
+            case "rnbluetoothle.onStateChange":
+                receiver = new StateReceiver(this.reactContext, transactionId);
+                break;
+
+            case "rnbluetoothle.onDiscovery":
+                receiver = new DiscoveryReceiver(this.reactContext, transactionId);
+                break;
+
+            case "rnbluetoothle.onBondedDevices":
+                receiver = new BondsReceiver(this.reactContext, transactionId);
+                break;
+
+            case "rnbluetoothle.onBondChange":
+                receiver = new BondReceiver(this.reactContext, transactionId);
+                break;
+
+            case "rnbluetoothle.onChange/":
+                receiver = new ChangeReceiver(this.reactContext, transactionId);
+                break;
+            default:
+                break;
+        }
+
+        if (receiver != null) {
+            receiver.register();
+            this.transactionReceivers.put(transactionId, receiver);
         }
     }
 
@@ -285,24 +316,89 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
      */
     @Override
     public void removeListener(String eventName) {
+        eventName = eventName.substring(0, eventName.lastIndexOf("/"));
+        String transactionId = eventName.substring(eventName.lastIndexOf("/") + 1);
 
-        if (eventName.startsWith("rnbluetoothle.onBond/") || eventName.startsWith("rnbluetoothle.onUnBound/")) {
+        // Unregister the event if already exists.
+        if (this.transactionReceivers.containsKey(transactionId)) {
+            TransactionReceiver receiver = this.transactionReceivers.get(transactionId);
+            this.transactionReceivers.remove(transactionId);
+            receiver.unregister();
+        }
+    }
 
-            // Unregister if device has previously registered.
-            // Each event is distinguished by a slash "/" followed by device id.
-            String deviceId = eventName.substring(eventName.lastIndexOf("/") + 1);
-            BondReceiver bondReceiver = this.deviceBondReceivers.get(deviceId);
-            if (bondReceiver != null) {
-                bondReceiver.unregister();
-                this.deviceBondReceivers.remove(deviceId);
+    /**
+     * Gets the JsDeviceGattCallback of remote device by its id.
+     * If the GATT connection is not stablished with the remote device it creates a brand new Gatt connection and if all goes well it returns a BluetoothGatt.
+     */
+    @Nullable
+    private BluetoothGatt getOrSetAndStablishGattConnection(String id) {
+        BluetoothDevice device = BluetoothState.getRemoteDevice(id, this.reactContext);
+        BluetoothGatt gatt = this.deviceBluetoothGatts.get(id);
+        if (gatt == null) {
+            JsDeviceGattCallback callback = new JsDeviceGattCallback(this.reactContext);
+            gatt = device.connectGatt(this.reactContext, false, callback);
+            if (gatt == null) {
+                return null;
             }
+            this.deviceBluetoothGatts.put(id, gatt);
+        }
 
-        } else {
-            Log.v("Bluetooth", "Received removeListener on event: " + eventName + " global receiver is taking care of it.");
-            globalReceiver.disableEvent(eventName);
-            if (globalReceiver.getEventsCount() == 0) {
-                unregisterGlobalBroadcast();
+        return gatt;
+    }
+
+    /**
+     * Gets whether the device with the id is connected.
+     */
+    @Override
+    public boolean getIsConnected(String id) {
+        if (this.getIsSupported()) {
+            BluetoothManager bluetoothManager = BluetoothState.getBluetoothManager(this.reactContext);
+            List<BluetoothDevice> connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT);
+            for (BluetoothDevice device : connectedDevices) {
+                if (device.getAddress().equals(id)) {
+                    return true;
+                }
             }
+        }
+        return false;
+    }
+
+    /**
+     * Connects to device.
+     *
+     * @param id
+     * @param promise
+     */
+    @Override
+    public void connect(String id, String Priority, Promise promise) {
+        BluetoothGatt gatt = this.getOrSetAndStablishGattConnection(id);
+        if (gatt == null) {
+            promise.reject(new Throwable("It was not possible to stablish connection with remote device."));
+            return;
+        }
+        promise.resolve(null);
+    }
+
+    /**
+     * Removes the current connection with remote device GATT.
+     *
+     * @param id
+     */
+    public void disconnect(String id, Promise promise) {
+        BluetoothGatt gatt = this.deviceBluetoothGatts.get(id);
+        if (gatt == null) {
+            // The device is already disconnected.
+            promise.resolve(null);
+            return;
+        }
+        try {
+            // Try to disconnected from the device.
+            gatt.disconnect();
+            promise.resolve(null);
+        } catch (Exception e) {
+            Log.e("Bluetooth", "A exception just happened, details: " + e.toString());
+            promise.reject(new Throwable("It was not possible to disconnect from this device."));
         }
     }
 

@@ -2,7 +2,7 @@
 import type {TurboModule} from 'react-native/Libraries/TurboModule/RCTExport';
 // @ts-ignore
 import {TurboModuleRegistry} from 'react-native';
-import {BluetoothDevice} from "./types";
+import {BluetoothConnectionPriority, BluetoothDevice, BluetoothDeviceService} from "./types";
 
 export interface Spec extends TurboModule {
     /**
@@ -82,6 +82,22 @@ export interface Spec extends TurboModule {
      * Get the current bonding devices.
      */
     getBondedDevices(): BluetoothDevice[];
+
+    /**
+     * Gets if device is connected.
+     * @param id The device id.
+     */
+    getIsConnected(id: string): boolean;
+
+    /**
+     * Stablish a GATT connection with remote device.
+     */
+    connect(id: string, priority?: BluetoothConnectionPriority): Promise<void>;
+
+    /**
+     * Removes the current GATT connection with remote device.
+     */
+    disconnect(): Promise<void>;
 
     /**
      * Add a event listener to native.

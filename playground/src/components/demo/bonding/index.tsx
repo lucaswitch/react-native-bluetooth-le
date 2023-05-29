@@ -61,13 +61,20 @@ export function Bonding() {
     const renderItem = useCallback((props: { index: number, item: BluetoothDevice }) => {
         const {address, name, rssi, dbm, bond} = props.item;
 
-        console.log('bond', bond)
+        /**
+         * When some pairing state changes through button pressing.
+         */
+        const handleOnChange = () => {
+            const bondedDevices = Bluetooth.getBondedDevices();
+            setDevices([...bondedDevices]);
+        }
+
         return <ListItem key={props.index}>
             <ListItemInside>
                 <OverlineText style={{color: '#000'}}>
-                    {(name) ? name : ''}{(address ? `${address}` : '')}
+                    {`${name} | ${address}`}
                 </OverlineText>
-                <BondingButton address={address} bond={bond}/>
+                <BondingButton address={address} bond={bond} onChange={handleOnChange}/>
             </ListItemInside>
         </ListItem>
     }, [])
@@ -75,7 +82,7 @@ export function Bonding() {
     useEffect(() => {
         askBluetoothPermissions().then(() => {
             const bondedDevices = Bluetooth.getBondedDevices();
-            setDevices(bondedDevices);
+            setDevices([...bondedDevices]);
         })
     }, [askBluetoothPermissions])
 

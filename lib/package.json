@@ -27,7 +27,6 @@
     "url": "https://github.com/lucaswitch/react-native-bluetooth-le/issues"
   },
   "homepage": "https://github.com/lucaswitch/react-native-bluetooth-le#readme",
-  "devDependencies": {},
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
@@ -39,5 +38,8 @@
     "android": {
       "javaPackageName": "com.rnbluetoothle"
     }
+  },
+  "dependencies": {
+    "uuid": "^9.0.0"
   }
 }

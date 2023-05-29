@@ -1,4 +1,4 @@
-package src.main.java.com.rnbluetoothle.bluetooth;
+package com.rnbluetoothle.bluetooth.bridge;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -23,6 +23,25 @@ public class JsBluetoothDevice {
         this.device = device;
     }
 
+
+    /**
+     * Gets the intent bluetooth device.
+     *
+     * @param intent
+     * @return
+     */
+    public static BluetoothDevice getDevice(Intent intent) {
+        BluetoothDevice device;
+        if (intent != null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
+            } else {
+                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            }
+        }
+        return device;
+    }
+
     /**
      * Gets WritableMap containing the correct js module types conversions from java.
      *
@@ -30,14 +49,7 @@ public class JsBluetoothDevice {
      */
     public WritableMap getMap() {
         WritableMap payload = new WritableNativeMap();
-        BluetoothDevice device = this.device;
-        if (this.intent != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
-            } else {
-                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            }
-        }
+        BluetoothDevice device = JsBluetoothDevice.getDevice(this.intent);
 
         String deviceType;
         switch (device.getType()) {

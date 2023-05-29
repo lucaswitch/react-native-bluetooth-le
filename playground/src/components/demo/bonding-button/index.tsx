@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 import {Bluetooth, BluetoothDevice} from "react-native-bluetooth-le";
-import {Text, TouchableOpacity} from "react-native";
+import {Alert, Text, TouchableOpacity} from "react-native";
 import {Container} from "./style";
 
 
@@ -8,7 +8,7 @@ import {Container} from "./style";
  * Bonding demo button.
  * @constructor
  */
-export function BondingButton({address, bond}: { address: string, bond: string }) {
+export function BondingButton({address, bond, onChange}: { address: string, bond: string, onChange?: () => void }) {
     const [bondState, setBondState] = useState(bond);
     const [loading, setLoading] = useState(false);
 
@@ -17,31 +17,31 @@ export function BondingButton({address, bond}: { address: string, bond: string }
      */
     const handleOnPress = useCallback(async () => {
         if (!loading) {
-            if (bondState === 'bonding') {
-                setLoading(true);
-                try {
+            setLoading(true);
+            try {
+                if (bondState === 'bonded') {
                     if (Bluetooth.getIsBonded(address)) { // Maybe the device was bond state has changed on device configuration.
                         await Bluetooth.unBond(address);
                     }
-                } catch (err) {
-                    console.info(err);
-                } finally {
-                    setLoading(false);
-                }
-            } else {
-                try {
+                } else {
                     if (!Bluetooth.getIsBonded(address)) {  // Maybe the device was bond state has changed on device configuration.
                         setLoading(true);
-                        await Bluetooth.bond(address);
+                        await Bluetooth.bond(address)
+                        if (onChange) {
+                            onChange();
+                        }
                     }
-                } catch (err) {
-                    console.info(err);
-                } finally {
-                    setLoading(false);
                 }
+
+            } catch (err) {
+
+                console.error(err);
+                Alert.alert('A error has ocurred', `Something just went wrong, :/ ${err}`);
             }
+            setLoading(false)
+
         }
-    }, [bondState, loading])
+    }, [bondState, loading, onChange])
 
     useEffect(() => {
         Bluetooth.onBondChange(address, (device: BluetoothDevice) => {
@@ -62,7 +62,7 @@ export function BondingButton({address, bond}: { address: string, bond: string }
             {
                 loading ?
                     <Text style={{fontSize: 8}}>
-                        {bondState === 'bonding' ? 'Unpairing...' : 'Pairing...'}
+                        {bondState === 'bonded' ? 'Unpairing...' : 'Pairing...'}
                     </Text>
                     :
                     <Text style={{fontSize: 8}}>{bondState === "bonded" ? "Paired" : "Not paired(Press to pair)"}</Text>

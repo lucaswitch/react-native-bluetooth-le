@@ -87,7 +87,7 @@ export function Discovery() {
         return <ListItem key={props.index}>
             <ListItemInside>
                 <OverlineText style={{color: '#000'}}>
-                    {(name) ? name : ''}{(address ? `${address}` : '')}
+                    {`${name} | ${address}`}
                 </OverlineText>
                 <BondingButton address={address} bond={bond}/>
             </ListItemInside>
