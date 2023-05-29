@@ -151,20 +151,23 @@ You can find more on our website. :)
     - Discover [**Supported**]
         - Allow the device to find out nearby devices.  [**Supported**]
     - Bonding [**Supported**]
-        - Allow *bond* with a bluetooth peripheral.
-        - Allow *unbound* with *bounded* bluetooth peripheral.
-        - Listen to *bound* and *unbound* events.
-        - Get the current bonded devices anytime.
-    - Connection
-        - Allow connect to bluetooth peripheral.
-        - Allow disconnect from connected bluetooth peripheral.
-        - Listen to "*connect*" and "*disconnect*" events.
+        - Allow *bond* with a bluetooth peripheral. [**Supported**]
+        - Allow *unbound* with *bounded* bluetooth peripheral. [**Supported**]]
+        - Listen to *bound* and *unbound* events. [**Supported**]]
+        - Get the current bonded devices anytime. [**Supported**]]
+    - Connection [**Supported**]]
+        - Allow connect to bluetooth peripheral. [**Supported**]]
+        - Allow disconnect from connected bluetooth peripheral. [**Supported**]]
+        - Listen to "*connect*" and "*disconnect*" events. [**Supported**]
     - Device profile
-        - Allow discover bluetooth peripheral services and it characteristics.
+        - Allow discover bluetooth peripheral services and it characteristics. [**Supported**]]
+        - See bluetooth services permissions. [**Supported**]
+        - See bluetooth characteristics permissions. [**Supported**]
+        - See bluetooth characteristics descriptors. [**Supported**] 
         - Characteristic
-            - Receive notifications from a device service and characteristic.
-            - Send data to device characteristic using plain bytes structure.
-            - Listen to device characteristic data using plain bytes structure.
+         - Receive notifications from a device service and characteristic. [**Supported**]
+         - Send data to device characteristic using plain bytes structure. [**Supported**]
+         - Listen to device characteristic data using plain bytes structure. [**Supported**]
 ## Changelog
     - 0.1 (Beta)
         Add support to basic capabilities
