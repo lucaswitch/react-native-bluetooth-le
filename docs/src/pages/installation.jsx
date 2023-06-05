@@ -12,7 +12,6 @@ export default function Installation(){
             It uses the new react-native turbo module architecture thats powers a better performance for react-native
             applications. Exposes a bluetooth javascript api with easy subscribe/unsubscribe pattern approach to handle bluetooth
             events and provides foreground mode transmission on android.
-
           </p>
           {/*<p className="text-2xl font-bold mt-10 mb-4">Compatibility</p>*/}
           {/*<p>*/}
