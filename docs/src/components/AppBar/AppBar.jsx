@@ -51,11 +51,27 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchAppBar() {
+
+
+
+export default function SearchAppBar() 
+{const [mobileOpen, setMobileOpen] = React.useState(false);
+const handleDrawerToggle = () => {
+  setMobileOpen(!mobileOpen);
+};
   return (
-    <Box>
-      <AppBar sx={{backgroundColor:'#b33ce6'}}>
+    <Box sx={{ display: 'flex' }}>
+      <AppBar sx={{flexGrow: 1,  backgroundColor:'#b33ce6'}}>
         <Toolbar>
+        <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
           <Typography
             variant="h6"
             noWrap

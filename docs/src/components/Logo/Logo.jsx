@@ -29,7 +29,7 @@ export default function Logo() {
           },
         }}
       >
-        <img src='/images/RN-logo.png' width={50} alt="Logo da biblioteca RN-Bluetooth"/>
+        <img src='/images/RN-logo.png' width={50} alt="Logo of Library RN Bluetooth"/>
         <Divider orientation="vertical" variant="middle" flexItem style={{marginLeft: 15}}/>
         <Link href='/'>
           <Button variant="text" style={{color: '#b33ce6'}}>RN-Bluetooth</Button>
