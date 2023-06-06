@@ -1,11 +1,8 @@
-import React from 'react'
-import {Box, Toolbar} from "@mui/material";
-import Type from "@/content/Type.mdx";
-import BluetoohState from "@/content/BluetoohAdapter.mdx";
+import React from "react";
+import BluetoohState from "../../content/capabilities/BluetoohState.mdx"
+import { Box, Toolbar} from "@mui/material";
 
-export default function Types() {
-  const drawerWidth = 240;
-
+export default function BluetoohStates() {
   return (
     <div className="ml-60 prose prose-2xl">
       <div className="flex ml-24 pr-64">
@@ -15,7 +12,7 @@ export default function Types() {
             sx={{ flexGrow: 1, p: 3, position:"center" }}
           >
             <Toolbar />
-            <Type />
+            <BluetoohState/>
           </Box>
         </div>
       </div>

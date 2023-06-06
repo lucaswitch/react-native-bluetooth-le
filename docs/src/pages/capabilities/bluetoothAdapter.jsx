@@ -1,9 +1,13 @@
 import React from "react";
-import Bonding from "../content/Bonding.mdx"
-import { Box, Toolbar} from "@mui/material";
+import BluetoohAdapter from "../../content/capabilities/BluetoohAdapter.mdx"
+import {Box, Toolbar} from "@mui/material";
+import GS from "@/content/GS.mdx";
 
-export default function BondingButton() {
-  return (
+
+export default function BluetoothAdapters(){
+  const drawerWidth = 240;
+
+  return(
     <div className="ml-60 prose prose-2xl">
       <div className="flex ml-24 pr-64">
         <div className="flex-row ">
@@ -12,7 +16,8 @@ export default function BondingButton() {
             sx={{ flexGrow: 1, p: 3, position:"center" }}
           >
             <Toolbar />
-            <Bonding/>
+            <BluetoohAdapter />
+
           </Box>
         </div>
       </div>

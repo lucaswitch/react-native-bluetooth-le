@@ -45,10 +45,10 @@ export default function Capabilities() {
       <Collapse in={open} timeout="auto" unmountOnExit>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/bluetoothAdapter" ? "font-bold text-white bg-[#b33ce6] " : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/bluetoothAdapter" ? "font-bold text-white bg-[#b33ce6] " : ""}>
             <ListItemIcon>
             </ListItemIcon>
-            <Link href='/bluetoothAdapter'>
+            <Link href='/capabilities/bluetoothAdapter'>
               <ListItemText primary="Bluetooth Adapter"
                             primaryTypographyProps={{
                               fontSize: 12,
@@ -60,10 +60,10 @@ export default function Capabilities() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/bluetoothState" ? "bg-[#b33ce6] font-bold text-white" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/bluetoothState" ? "bg-[#b33ce6] font-bold text-white" : ""}>
             <ListItemIcon>
             </ListItemIcon>
-            <Link href='/bluetoothState'>
+            <Link href='/capabilities/bluetoothState'>
               <ListItemText primary="Bluetooth State"
                             primaryTypographyProps={{
                               fontSize: 12,
@@ -75,10 +75,10 @@ export default function Capabilities() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/bonding" ? "bg-[#b33ce6] font-bold text-white" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/bonding" ? "bg-[#b33ce6] font-bold text-white" : ""}>
             <ListItemIcon>
             </ListItemIcon>
-            <Link href='/bonding'>
+            <Link href='/capabilities/bonding'>
               <ListItemText primary="Bonding Button"
                             primaryTypographyProps={{
                               fontSize: 12,
@@ -90,10 +90,10 @@ export default function Capabilities() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/discovery" ? "bg-[#b33ce6] font-bold text-white" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/discovery" ? "bg-[#b33ce6] font-bold text-white" : ""}>
             <ListItemIcon>
             </ListItemIcon>
-            <Link href='/discovery'>
+            <Link href='/capabilities/discovery'>
               <ListItemText primary="Discovery"
                             primaryTypographyProps={{
                               fontSize: 12,
@@ -105,26 +105,11 @@ export default function Capabilities() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/types" ? "bg-[#b33ce6] font-bold text-white" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/types" ? "bg-[#b33ce6] font-bold text-white" : ""}>
             <ListItemIcon>
             </ListItemIcon>
-            <Link href='/types'>
+            <Link href='/capabilities/types'>
               <ListItemText primary="Types"
-                            primaryTypographyProps={{
-                              fontSize: 12,
-                              letterSpacing: 0,}}
-              />
-            </Link>
-
-          </ListItemButton>
-        </List>
-
-        <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/gatt" ? "bg-[#b33ce6] font-bold text-white" : ""}>
-            <ListItemIcon>
-            </ListItemIcon>
-            <Link href='/gatt'>
-              <ListItemText primary="GATT"
                             primaryTypographyProps={{
                               fontSize: 12,
                               letterSpacing: 0,}}

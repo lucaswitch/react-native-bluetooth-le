@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Capabilities from './Capabilities';
+import Gatt from './Gatt';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
@@ -90,6 +91,13 @@ export default function GettingStarted(props) {
     </div>
   );
 
+  const drawer3 = (
+    <div>
+      <Divider/>
+      <Gatt/>
+    </div>
+  );
+
   const container = window !== undefined ? () => window().document.body : undefined;
 
 
@@ -152,6 +160,7 @@ export default function GettingStarted(props) {
         >
           {drawer}
           {drawer2}
+          {drawer3}
         </Drawer>
         <Drawer
           variant="permanent"
@@ -163,6 +172,7 @@ export default function GettingStarted(props) {
         >
           {drawer}
           {drawer2}
+          {drawer3}
         </Drawer>
       </Box>
       </Box>
