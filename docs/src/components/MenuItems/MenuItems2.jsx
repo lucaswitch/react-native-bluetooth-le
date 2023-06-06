@@ -14,13 +14,20 @@ export default function Capabilities() {
   const [open, setOpen] = React.useState(true);
   const router = useRouter();
 
+  const styleSx = {
+    "&:hover": {
+      backgroundColor: "rgba(179,60,230,0.77)",
+      color: '#FFFFFF !important'
+    }
+  }
+
   return (
     <List
       sx={{ width: '100%', maxWidth: 320, bgcolor: 'background.paper' }}
       component="nav"
       aria-labelledby="nested-list-subheader"
     >
-      <ListItemButton onClick={() => setOpen(!open)}>
+      <ListItemButton sx={styleSx} onClick={() => setOpen(!open)}>
         <ListItemIcon>
           <SubjectIcon sx={{ fontSize: 20, color:'#b33ce6'}} />
         </ListItemIcon >
@@ -28,7 +35,7 @@ export default function Capabilities() {
             sx={{ my: 0 }}
             primary="Capabilities"
             primaryTypographyProps={{
-                fontSize: 12,
+                fontSize: 16,
                 fontWeight: 'bold',
                 letterSpacing: 0,
             }}
@@ -38,14 +45,13 @@ export default function Capabilities() {
       <Collapse in={open} timeout="auto" unmountOnExit>
 
         <List component="div1" disablePadding>
-          <ListItemButton className={router.pathname === "/bluetoothAdapter" ? "bg-[#b33ce6]" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/bluetoothAdapter" ? "font-bold text-white bg-[#b33ce6] " : ""}>
             <ListItemIcon>
             </ListItemIcon>
             <Link href='/bluetoothAdapter'>
               <ListItemText primary="Bluetooth Adapter"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              fontWeight: 'bold',
                               letterSpacing: 0,}}
               />
             </Link>
@@ -54,14 +60,13 @@ export default function Capabilities() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton className={router.pathname === "/bluetoothState" ? "bg-[#b33ce6]" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/bluetoothState" ? "bg-[#b33ce6] font-bold text-white" : ""}>
             <ListItemIcon>
             </ListItemIcon>
             <Link href='/bluetoothState'>
               <ListItemText primary="Bluetooth State"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              fontWeight: 'bold',
                               letterSpacing: 0,}}
               />
             </Link>
@@ -70,14 +75,13 @@ export default function Capabilities() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton className={router.pathname === "/bonding" ? "bg-[#b33ce6]" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/bonding" ? "bg-[#b33ce6] font-bold text-white" : ""}>
             <ListItemIcon>
             </ListItemIcon>
             <Link href='/bonding'>
               <ListItemText primary="Bonding Button"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              fontWeight: 'bold',
                               letterSpacing: 0,}}
               />
             </Link>
@@ -86,14 +90,13 @@ export default function Capabilities() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton className={router.pathname === "/discovery" ? "bg-[#b33ce6]" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/discovery" ? "bg-[#b33ce6] font-bold text-white" : ""}>
             <ListItemIcon>
             </ListItemIcon>
             <Link href='/discovery'>
               <ListItemText primary="Discovery"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              fontWeight: 'bold',
                               letterSpacing: 0,}}
               />
             </Link>
@@ -102,14 +105,13 @@ export default function Capabilities() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton className={router.pathname === "/types" ? "bg-[#b33ce6]" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/types" ? "bg-[#b33ce6] font-bold text-white" : ""}>
             <ListItemIcon>
             </ListItemIcon>
             <Link href='/types'>
               <ListItemText primary="Types"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              fontWeight: 'bold',
                               letterSpacing: 0,}}
               />
             </Link>
@@ -118,14 +120,13 @@ export default function Capabilities() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton className={router.pathname === "/gatt" ? "bg-[#b33ce6]" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/gatt" ? "bg-[#b33ce6] font-bold text-white" : ""}>
             <ListItemIcon>
             </ListItemIcon>
             <Link href='/gatt'>
               <ListItemText primary="GATT"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              fontWeight: 'bold',
                               letterSpacing: 0,}}
               />
             </Link>

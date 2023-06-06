@@ -19,7 +19,8 @@ export default function StartHere() {
   const router = useRouter();
   const styleSx = {
     "&:hover": {
-      backgroundColor: "#b33ce6"
+      backgroundColor: "rgba(179,60,230,0.77)",
+      color: '#FFFFFF !important'
     }
   }
   return (
@@ -38,7 +39,7 @@ export default function StartHere() {
             sx={{ my: 0 }}
             primary="Start Here"
             primaryTypographyProps={{
-                fontSize: 12,
+                fontSize: 16,
                 fontWeight: 'bold',
                 letterSpacing: 0,
             }}
@@ -48,7 +49,7 @@ export default function StartHere() {
       <Collapse in={open} timeout="auto" unmountOnExit>
 
         <List component="div1" disablePadding>
-          <ListItemButton className={router.pathname === "/gettingStarted" ? "bg-[#b33ce6]" : ""} >
+          <ListItemButton sx={styleSx} className={router.pathname === "/gettingStarted" ? "bg-[#b33ce6]" : ""} >
             <ListItemIcon>
             </ListItemIcon>
 
@@ -56,7 +57,6 @@ export default function StartHere() {
               <ListItemText primary="Getting Started"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              fontWeight: 'bold',
                               letterSpacing: 0,}}
               />
             </Link>
@@ -64,14 +64,13 @@ export default function StartHere() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton className={router.pathname === "/imperative" ? "bg-[#b33ce6]" : ""}>
+          <ListItemButton sx={styleSx} className={router.pathname === "/imperative" ? "bg-[#b33ce6]" : ""}>
             <ListItemIcon>
             </ListItemIcon>
             <Link href='/imperative'>
               <ListItemText primary="Imperative API"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              fontWeight: 'bold',
                               letterSpacing: 0,}}
               />
             </Link>
