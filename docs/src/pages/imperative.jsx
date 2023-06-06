@@ -1,5 +1,5 @@
 import React from "react";
-import Gatt from "../content/Gatt.mdx"
+import Imper from "../content/Imper.mdx"
 import { Box, Toolbar} from "@mui/material";
 
 export default function Imperative() {
@@ -12,7 +12,7 @@ export default function Imperative() {
             sx={{ flexGrow: 1, p: 3, position:"center" }}
           >
             <Toolbar />
-            <Gatt/>
+            <Imper/>
           </Box>
         </div>
       </div>

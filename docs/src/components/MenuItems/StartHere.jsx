@@ -64,11 +64,11 @@ export default function StartHere() {
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton className={router.pathname === "/installation" ? "bg-[#b33ce6]" : ""}>
+          <ListItemButton className={router.pathname === "/imperative" ? "bg-[#b33ce6]" : ""}>
             <ListItemIcon>
             </ListItemIcon>
-            <Link href='/installation'>
-              <ListItemText primary="Installation"
+            <Link href='/imperative'>
+              <ListItemText primary="Imperative API"
                             primaryTypographyProps={{
                               fontSize: 12,
                               fontWeight: 'bold',
