@@ -1,13 +1,9 @@
 import React from "react";
-import BluetoohAdapter from "../content/BluetoohAdapter.mdx"
-import {Box, Toolbar} from "@mui/material";
-import GS from "@/content/GS.mdx";
+import BluetoohState from "../content/BluetoohState.mdx"
+import { Box, Toolbar} from "@mui/material";
 
-
-export default function BluetoothAdapters(){
-  const drawerWidth = 240;
-
-  return(
+export default function BluetoohStates() {
+  return (
     <div className="ml-60 prose prose-2xl">
       <div className="flex ml-24 pr-64">
         <div className="flex-row ">
@@ -16,8 +12,7 @@ export default function BluetoothAdapters(){
             sx={{ flexGrow: 1, p: 3, position:"center" }}
           >
             <Toolbar />
-            <BluetoohAdapter />
-
+            <BluetoohState/>
           </Box>
         </div>
       </div>
