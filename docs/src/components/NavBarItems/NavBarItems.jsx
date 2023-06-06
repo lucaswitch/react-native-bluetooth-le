@@ -16,7 +16,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import { Button } from '@mui/material';
 import GettingStarted from '../MenuItems/MenuItems';
 import Logo from '../Logo/Logo';
-import Capabilities from '../MenuItems/MenuItems2';
+import Capabilities from '../MenuItems/Capabilities';
 import { BorderAll } from '@mui/icons-material';
 import SearchAppBar from '../AppBar/AppBar';
 
