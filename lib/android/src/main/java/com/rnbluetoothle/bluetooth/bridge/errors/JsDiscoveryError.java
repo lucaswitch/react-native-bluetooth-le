@@ -13,7 +13,7 @@ public class JsDiscoveryError extends JsError {
         GATT_REQUEST_NOT_SUPPORTED
     }
 
-    JsDiscoveryError(int code, String message) {
+    public JsDiscoveryError(int code, String message) {
         super(code, message);
     }
 }

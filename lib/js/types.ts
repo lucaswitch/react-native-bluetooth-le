@@ -20,8 +20,11 @@ export type BluetoothDeviceService = {
 
 export type BluetoothDeviceCharacteristic = {
     id: string
-    permissions: BluetoothDeviceCharacteristicPermissions
+    permissions: BluetoothDeviceCharacteristicPermissions,
+    value: BluetoothDeviceCharacteristicValue
 }
+
+export type BluetoothDeviceCharacteristicValue = number[] | null;
 
 export type BluetoothDeviceCharacteristicPermissions = "read" | "write" | "notify" | "broadcast" | "write_no_response";
 

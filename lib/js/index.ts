@@ -3,7 +3,7 @@ import {
     BluetoothDevice,
     AdapterStatusEvent,
     BluetoothConnectionPriority,
-    BluetoothConnectionStatusEvent
+    BluetoothConnectionStatusEvent, BluetoothDeviceCharacteristic, BluetoothDeviceCharacteristicValue
 } from "./types";
 // @ts-ignore
 import {NativeEventEmitter, NativeModules, Platform, PermissionsAndroid} from 'react-native';
@@ -402,7 +402,7 @@ export const Bluetooth = {
                     PermissionsAndroid.check(permission)
                         .then((granted) => {
                             if (!granted) {
-                                console.error(`Before "onBondChange" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`);
+                                console.error(`Before "onChange" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`);
                             }
                         });
                 }
@@ -428,7 +428,7 @@ export const Bluetooth = {
      *    - android.permission.ACCESS_FINE_LOCATION in your AndroidManifest.xml file.
      *    - android.permission.BLUETOOTH_CONNECT before using this function on application code.
      */
-    async getIsConnected(id: string) {
+    getIsConnected(id: string): boolean {
         if (!BluetoothModule) {
             throw new Error("It was not possible to find BluetoothModule.");
         }
@@ -442,7 +442,7 @@ export const Bluetooth = {
                     // @ts-ignore
                     const granted = await PermissionsAndroid.check(permission);
                     if (!granted) {
-                        throw new Error(`Before "unbound" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`)
+                        throw new Error(`Before "getIsConnected" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`)
                     }
                 }
             }
@@ -452,7 +452,7 @@ export const Bluetooth = {
     },
 
     /**
-     * Tries to stablish a GATT connection with remote device.
+     * Tries to establish a GATT connection with remote device.
      * On Android:
      *    The id is the remote device mac address.
      *    Make sure to ask the user the following permissions or your application or this won't work just as expected:
@@ -476,7 +476,7 @@ export const Bluetooth = {
                     // @ts-ignore
                     const granted = await PermissionsAndroid.check(permission);
                     if (!granted) {
-                        throw new Error(`Before "unbound" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`)
+                        throw new Error(`Before "connect" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`)
                     }
                 }
             }
@@ -489,6 +489,102 @@ export const Bluetooth = {
     },
 
     /**
+     * Tries to disconnect GATT connection with remote device.
+     * On Android:
+     *    The id is the remote device mac address.
+     *    Make sure to ask the user the following permissions or your application or this won't work just as expected:
+     *    - android.permission.BLUETOOTH in your AndroidManifest.xml file.
+     *    - android.permission.ACCESS_FINE_LOCATION in your AndroidManifest.xml file.
+     *    - android.permission.BLUETOOTH_CONNECT before using this function on application code.
+     */
+    async disconnect(id: string): Promise<void> {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
+        if (!id || id.length === 0) {
+            throw new Error('"id" must be a valid platform address for targeting bluetooth device.');
+        }
+
+        // Check platform specific permissions.
+        // @ts-ignore
+        if (__DEV__) {
+            if (Platform.OS === 'android') {
+                const neededPermissions = ['android.permission.BLUETOOTH_CONNECT']
+                for (const permission of neededPermissions) {
+                    // @ts-ignore
+                    const granted = await PermissionsAndroid.check(permission);
+                    if (!granted) {
+                        throw new Error(`Before "disconnect" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`)
+                    }
+                }
+            }
+        }
+
+        return await BluetoothModule.disconnect(id);
+    },
+
+    /**
+     * Monitor the characteristic from remote device.
+     * Make sure the remove device is connected calling the "getIsConnected" method.
+     * On Android:
+     *    The id is the remote device mac address.
+     *    Make sure to ask the user the following permissions or your application or this won't work just as expected:
+     *    - android.permission.BLUETOOTH in your AndroidManifest.xml file.
+     *    - android.permission.ACCESS_FINE_LOCATION in your AndroidManifest.xml file.
+     *    - android.permission.BLUETOOTH_CONNECT before using this function on application code.
+     */
+    onMonitorValue(id: string, serviceUUID: string, characteristicUUID: string, callback: (value: BluetoothDeviceCharacteristicValue) => void): Function {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
+        if (!id || id.length === 0) {
+            throw new Error('"id" must be a valid platform address for targeting bluetooth device.');
+        }
+
+        // Check platform specific permissions.
+        // @ts-ignore
+        if (__DEV__) {
+            if (Platform.OS === 'android') {
+                const neededPermissions = ['android.permission.BLUETOOTH_CONNECT']
+                for (const permission of neededPermissions) {
+                    // @ts-ignore
+                    const granted = await PermissionsAndroid.check(permission);
+                    if (!granted) {
+                        throw new Error(`Before "onMonitorValue" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`)
+                    }
+                }
+            }
+        }
+
+        const transactionId = uuidv4();
+        const event = `rnbluetoothle.onMonitorValue/${transactionId}`;
+
+        // Setup JNI event listeners.
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
+        BluetoothModule.addListener(event);
+        const eventListener = bluetoothEventEmitter.addListener(event, callback);
+
+        // Enable bluetooth notification
+        let enabled = BluetoothModule.enableNotification(id, serviceUUID, characteristicUUID, transactionId);
+        if (!enabled) {
+            throw new Error(`It was not possible to enable bluetooth notification for characteristic ${characteristicUUID}.`);
+        }
+
+        return function () {
+            // Disable JNI events.
+            BluetoothModule.removeListener(event);
+            eventListener.remove();
+
+            if (BluetoothModule.disableNotification(id, transactionId)) {
+                throw new Error(`It was not possible to disable the bluetooth for characteristic ${characteristicUUID}.`)
+            }
+        }
+
+    },
+
+
+    /**
+     * todo
      * Listen whether bluetooth connection has changed.
      * On Android:
      *    The id is the remote device mac address.
@@ -499,9 +595,41 @@ export const Bluetooth = {
      *    - android.permission.BLUETOOTH_CONNECT before using this function on application code.
      * @return boolean Whether the unbonding was successfully.
      */
-    onConnectionChange(callback: (event: BluetoothConnectionStatusEvent) => void) {
-        
+    /*
+    onConnectionChange(id, callback: (event: BluetoothConnectionStatusEvent) => void) {
+        if (!BluetoothModule) {
+            throw new Error("It was not possible to find BluetoothModule.");
+        }
+        if (!id || id.length === 0) {
+            throw new Error('"id" must be a valid platform address for targeting bluetooth device.');
+        }
+
+        // Check platform specific permissions.
+        // @ts-ignore
+        if (__DEV__) {
+            if (Platform.OS === 'android') {
+                const neededPermissions = ['android.permission.BLUETOOTH_CONNECT']
+                for (const permission of neededPermissions) {
+                    // @ts-ignore
+                    const granted = await PermissionsAndroid.check(permission);
+                    if (!granted) {
+                        throw new Error(`Before "unbound" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`)
+                    }
+                }
+            }
+        }
+
+        const event = `rnbluetoothle.onConnectionChange/${id}`;
+
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
+        BluetoothModule.addListener(event);
+        const eventListener = bluetoothEventEmitter.addListener(event, callback);
+        return function () {
+            BluetoothModule.removeListener(event);
+            eventListener.remove();
+        }
     }
+     */
 }
 
 

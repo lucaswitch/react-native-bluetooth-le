@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 
-
 public class BluetoothState {
 
     private final BluetoothAdapter adapter;
@@ -39,7 +38,8 @@ public class BluetoothState {
     }
 
     /**
-     * Gets the default bluetooth adapter, it must support multipleAdvertisementSupported too.
+     * Gets the default bluetooth adapter, it must support
+     * multipleAdvertisementSupported too.
      */
     @Nullable
     public static BluetoothAdapter getSystemDefaultAdapter(ReactApplicationContext context) {
@@ -77,5 +77,4 @@ public class BluetoothState {
     public static boolean getIsSupported(ReactApplicationContext context) {
         return getSystemDefaultAdapter(context) != null;
     }
-
 }

@@ -1,5 +1,7 @@
 package com.rnbluetoothle;
 
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -16,27 +18,19 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableArray;
-import com.rnbluetoothle.bluetooth.BluetoothState;
+import com.facebook.react.bridge.WritableMap;
 
-import com.rnbluetoothle.bluetooth.receivers.DiscoveryReceiver;
-import com.rnbluetoothle.bluetooth.receivers.StateReceiver;
-import com.rnbluetoothle.bluetooth.receivers.BondsReceiver;
-import com.rnbluetoothle.bluetooth.receivers.BondReceiver;
-import com.rnbluetoothle.bluetooth.receivers.ChangeReceiver;
-import com.rnbluetoothle.bluetooth.receivers.TransactionReceiver;
+import com.rnbluetoothle.bluetooth.BluetoothState;
+import com.rnbluetoothle.bluetooth.GattHelper;
+import com.rnbluetoothle.bluetooth.receivers.*;
+import com.rnbluetoothle.bluetooth.bridge.*;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDevice;
-import com.rnbluetoothle.bluetooth.bridge.JsDeviceGattCallback;
-
-import org.jetbrains.annotations.Nullable;
-
 public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
-
 
     public static String NAME = "ReactNativeBluetoothLe";
     private final ReactApplicationContext reactContext;
@@ -47,6 +41,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
      */
     private HashMap<String, TransactionReceiver> transactionReceivers;
     private HashMap<String, BluetoothGatt> deviceBluetoothGatts;
+    private HashMap<String, JsBluetoothDeviceGattCallback> deviceBluetoothGattCallbacks;
 
     RNBluetoothLeModule(ReactApplicationContext context) {
         super(context);
@@ -159,12 +154,14 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
                 Log.e("Bluetooth", "Bluetooth remote device " + id + " must be successfully bonded.");
                 return "";
             }
-            String errorMessage = "Could not bond the remote device with address " + id + " because bluetooth is not supported or enabled on device bluetooth adapter.";
+            String errorMessage = "Could not bond the remote device with address " + id
+                    + " because bluetooth is not supported or enabled on device bluetooth adapter.";
             Log.e("Bluetooth", errorMessage);
             return errorMessage;
         }
 
-        String errorMessage = "Could not bond the remote device with address " + id + " because bluetooth is not supported or enabled on device bluetooth adapter.";
+        String errorMessage = "Could not bond the remote device with address " + id
+                + " because bluetooth is not supported or enabled on device bluetooth adapter.";
         Log.e("Bluetooth", errorMessage);
         return errorMessage;
     }
@@ -185,7 +182,8 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
             BluetoothAdapter adapter = bluetoothState.getSystemDefaultAdapter();
             BluetoothDevice device = adapter.getRemoteDevice(id);
 
-            // The removeBond method is hidden on Sdk Api, we need to use a small tricky to make this "private" method accessible.
+            // The removeBond method is hidden on Sdk Api, we need to use a small tricky to
+            // make this "private" method accessible.
             try {
                 Method hiddenMethod = device.getClass().getMethod("removeBond", (Class[]) null);
                 hiddenMethod.invoke(device, (Object[]) null);
@@ -198,7 +196,8 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
             }
         }
 
-        String errorMessage = "Could not unbond the remote device with address " + id + " because bluetooth is not supported or enabled on device bluetooth adapter.";
+        String errorMessage = "Could not unbond the remote device with address " + id
+                + " because bluetooth is not supported or enabled on device bluetooth adapter.";
         Log.e("Bluetooth", errorMessage);
         return errorMessage;
     }
@@ -224,6 +223,67 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     }
 
     /**
+     * Gets the characteristic.
+     * 
+     * @return
+     */
+    @Override
+    public WritableMap getCharacteristic(String address, String serviceUUID, String characteristicUUID) {
+        BluetoothGatt gatt = this.getGattConnection(address);
+
+        if (gatt != null) {
+            BluetoothGattCharacteristic characteristic = GattHelper.getCharacteristic(gatt, serviceUUID,
+                    characteristicUUID);
+            if (characteristic != null) {
+                return JsBluetoothDeviceServiceCharacteristic.getMap(JsBluetoothDeviceServiceCharacteristic);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the service.
+     * 
+     * @param address
+     * @param serviceUUID
+     * @return
+     */
+    public WritableMap getService(String address, String serviceUUID) {
+        BluetoothGatt gatt = this.getGattConnection(address);
+
+        if (gatt != null) {
+            BluetoothGattService service = GattHelper.getService(gatt, serviceUUID);
+            if (service != null) {
+                return JsBluetoothDeviceService.getMap(service);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets all services.
+     * 
+     * @param address
+     * @param serviceUUID
+     * @return
+     */
+    public WritableArray getServices(String address, String serviceUUID) {
+        BluetoothGatt gatt = this.getGattConnection(address);
+
+        WritableArray jsServices = Arguments.createArray();
+        if (gatt != null) {
+            List<BluetoothGattService> services = GattHelper.getAllServices(gatt);
+            if (services != null && services.size() > 0) {
+                JsBluetoothDeviceService.getMap(services);
+            }
+        }
+
+        return jsServices;
+    }
+
+    /**
      * Gets whether bluetooth is supported.
      *
      * @return
@@ -242,25 +302,31 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     }
 
     /**
-     * Starts broadcast receivers.
+     * Gets the event properties such: transactionId, eventName and address from
+     * event name.
+     * The event name can be:
+     * - anyeventname/transactionid
+     * - anyeventname/transactionid/deviceId
+     *
+     * @return
      */
-    private void registerGlobalBroadcast() {
-        // Register global listener.
-        if (this.globalReceiver == null) {
-            this.globalReceiver = new GlobalReceiver(this.reactContext);
-            reactContext.registerReceiver(this.globalReceiver, GlobalReceiver.createIntentFilter());
-            Log.v("Bluetooth", "\"GlobalReceiver\" registered receiver.");
-        }
-    }
+    private String[] getEventProperties(String eventName) {
+        int firstTrailingSlash = eventName.indexOf("/");
+        int secondTrailingSlash = eventName.lastIndexOf("/");
+        String transactionId = null;
+        String address = null;
+        String[] properties = new String[3];
+        int position = 0;
 
-    /**
-     * Stops broadcast receiver.
-     */
-    private void unregisterGlobalBroadcast() {
-        if (globalReceiver != null) {
-            reactContext.unregisterReceiver(globalReceiver);
-            globalReceiver = null;
+        for (int i = 0; i < eventName.length(); i++) {
+            char c = eventName.charAt(i);
+            if (c == '/') {
+                position = position + 1;
+            } else {
+                properties[position] += c;
+            }
         }
+        return properties;
     }
 
     /**
@@ -268,7 +334,11 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
      */
     @Override
     public void addListener(String eventName) {
-        this.removeListener(eventName);
+
+        String[] properties = this.getEventProperties(eventName);
+        eventName = properties[0];
+        String transactionId = properties[1];
+        String address = properties[2];
 
         // Unregister the event if already exists.
         if (this.transactionReceivers.containsKey(transactionId)) {
@@ -277,9 +347,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
             receiver.unregister();
         }
 
-        eventName = eventName.substring(0, eventName.lastIndexOf("/"));
-        String transactionId = eventName.substring(eventName.lastIndexOf("/") + 1);
-        TransactionReceiver receiver;
+        TransactionReceiver receiver = null;
         switch (eventName) {
 
             case "rnbluetoothle.onStateChange":
@@ -301,6 +369,10 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
             case "rnbluetoothle.onChange/":
                 receiver = new ChangeReceiver(this.reactContext, transactionId);
                 break;
+
+            case "rnbluetoothle.onReadCharacteristic/":
+                receiver = new ChangeReceiver(this.reactContext, transactionId);
+                break;
             default:
                 break;
         }
@@ -316,8 +388,8 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
      */
     @Override
     public void removeListener(String eventName) {
-        eventName = eventName.substring(0, eventName.lastIndexOf("/"));
-        String transactionId = eventName.substring(eventName.lastIndexOf("/") + 1);
+        String[] properties = this.getEventProperties(eventName);
+        eventName = properties[0];
 
         // Unregister the event if already exists.
         if (this.transactionReceivers.containsKey(transactionId)) {
@@ -328,23 +400,107 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     }
 
     /**
-     * Gets the JsDeviceGattCallback of remote device by its id.
-     * If the GATT connection is not stablished with the remote device it creates a brand new Gatt connection and if all goes well it returns a BluetoothGatt.
+     * Enable the characteristic value notification.
+     * If can't returns false.
+     * 
+     * @param transactionId
+     * @param address
+     * @param serviceUUID
+     * @param characteristicUUID
+     * @return
      */
-    @Nullable
-    private BluetoothGatt getOrSetAndStablishGattConnection(String id) {
-        BluetoothDevice device = BluetoothState.getRemoteDevice(id, this.reactContext);
-        BluetoothGatt gatt = this.deviceBluetoothGatts.get(id);
+    @Override
+    public boolean enableNotification(
+            String address,
+            String serviceUUID,
+            String characteristicUUID,
+            String transactionId) {
+        JsBluetoothDeviceGattCallback gattCallback = this.getGattConnectionCallback(address);
+        if (gattCallback == null) {
+            return false;
+        }
+
+        BluetoothGatt gatt = this.getGattConnection(address);
+        return gattCallback.addCharacteristicNotification(gatt, serviceUUID, characteristicUUID, transactionId);
+    }
+
+    /**
+     * Disable the characteristic value notification.
+     * If can't returns false.
+     * 
+     * @param transactionId
+     * @param address
+     * @param serviceUUID
+     * @param characteristicUUID
+     * @return
+     */
+    @Override
+    public boolean disableNotification(
+            String address,
+            String transactionId) {
+        JsBluetoothDeviceGattCallback gattCallback = this.getGattConnectionCallback(address);
+        if (gattCallback == null) {
+            return false;
+        }
+
+        BluetoothGatt gatt = this.getGattConnection(address);
+        return gattCallback.removeCharacteristicNotification(gatt, transactionId);
+    }
+
+    /**
+     * Gets the JsBluetoothDeviceGattCallback of remote device by its address.
+     * If the GATT connection is not stablished with the remote device it creates a
+     * brand new Gatt connection and if all goes well it returns a BluetoothGatt.
+     */
+    private BluetoothGatt getOrSetAndStablishGattConnection(String address) {
+        BluetoothGatt gatt = this.getGattConnection(address);
         if (gatt == null) {
-            JsDeviceGattCallback callback = new JsDeviceGattCallback(this.reactContext);
+            JsBluetoothDeviceGattCallback callback = new JsBluetoothDeviceGattCallback(this.reactContext, address);
             gatt = device.connectGatt(this.reactContext, false, callback);
             if (gatt == null) {
                 return null;
             }
-            this.deviceBluetoothGatts.put(id, gatt);
+            this.deviceBluetoothGatts.put(address, gatt);
+            this.deviceBluetoothGattCallbacks.put(address, callback);
         }
 
         return gatt;
+    }
+
+    /**
+     * Gets the current remote device GATT connection.
+     * 
+     * @return
+     */
+    private BluetoothGatt getGattConnection(String address) {
+        BluetoothDevice device = BluetoothState.getRemoteDevice(address, this.reactContext);
+        BluetoothGatt gatt = this.deviceBluetoothGatts.get(address);
+        return gatt;
+    }
+
+    /**
+     * Gets the current remote device GATT callback.
+     * 
+     * @return
+     */
+    private JsBluetoothDeviceGattCallback getGattConnectionCallback(String address) {
+        BluetoothDevice device = BluetoothState.getRemoteDevice(address, this.reactContext);
+        JsBluetoothDeviceGattCallback gatt = this.deviceBluetoothGattCallbacks.get(address);
+        return gatt;
+    }
+
+    /**
+     * Disconnect and remove the current address gatt connection.
+     * 
+     * @return
+     */
+    private void removeGattConnection(String address) {
+        BluetoothGatt gatt = this.getGattConnection(address);
+        if (gatt != null) {
+            gatt.disconnect();
+            this.deviceBluetoothGatts.remove(address);
+            this.deviceBluetoothGattCallbacks.remove(address);
+        }
     }
 
     /**

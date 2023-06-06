@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDevice;
+import com.rnbluetoothle.bluetooth.bridge.JsEventDispatcher;
 
 /**
  * Receiver responsible to sending discovery(scan) events.
@@ -16,9 +17,9 @@ public class DiscoveryReceiver extends TransactionReceiver {
 
     public DiscoveryReceiver(ReactApplicationContext context, String transactionId) {
         super(context, transactionId);
-        this.intentActions = new String()[]{
-            BluetoothDevice.ACTION_FOUND
-        }
+        this.intentActions = new String[]{
+                BluetoothDevice.ACTION_FOUND
+        };
     }
 
     /**
@@ -30,6 +31,6 @@ public class DiscoveryReceiver extends TransactionReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);
-        JsEventDispatcher.send(this.EVENT_ON_DISCOVERY, jsBluetoothDevice.getMap());
+        JsEventDispatcher.send(this.reactContext, this.EVENT_ON_DISCOVERY, jsBluetoothDevice.getMap());
     }
 }

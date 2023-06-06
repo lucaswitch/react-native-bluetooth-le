@@ -12,9 +12,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
  * Deals with a single device connection and disconnection events.
  */
 public class ConnectionReceiver extends TransactionReceiver {
-    protected String EVENT_ON_CONNECT = "rnbluetoothle.onConnect/";
-    protected String EVENT_ON_DISCONNECT = "rnbluetoothle.onDisconnect/";
-    protected address;
+    protected String EVENT_ON_CONNECTION_CHANGE = "rnbluetoothle.onConnectionChange/";
+    protected String address;
 
     public ConnectionReceiver(ReactApplicationContext context, String transactionId, String address) {
         super(context, transactionId);
@@ -43,7 +42,7 @@ public class ConnectionReceiver extends TransactionReceiver {
             if (action.equals(BluetoothDevice.ACTION_ACL_CONNECTED)) {
 
                 JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);
-                this.sendJsModuleEvent(this.EVENT_ON_CONNECT, jsBluetoothDevice.getMap());
+                this.sendJsModuleEvent(this.reactContext, this.EVENT_ON_CONNECT, jsBluetoothDevice.getMap());
             } else if (action.equals(BluetoothDevice.ACTION_ACL_DISCONNECTED)) {
 
                 JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);

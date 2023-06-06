@@ -2,7 +2,12 @@
 import type {TurboModule} from 'react-native/Libraries/TurboModule/RCTExport';
 // @ts-ignore
 import {TurboModuleRegistry} from 'react-native';
-import {BluetoothConnectionPriority, BluetoothDevice, BluetoothDeviceService} from "./types";
+import {
+    BluetoothConnectionPriority,
+    BluetoothDevice,
+    BluetoothDeviceCharacteristic,
+    BluetoothDeviceService
+} from "./types";
 
 export interface Spec extends TurboModule {
     /**
@@ -97,7 +102,46 @@ export interface Spec extends TurboModule {
     /**
      * Removes the current GATT connection with remote device.
      */
-    disconnect(): Promise<void>;
+    disconnect(id: string): Promise<void>;
+
+    /**
+     * Gets the characteristic value.
+     * @param id
+     * @param serviceUUID
+     * @param characteristicUUID
+     */
+    onCharacteristicRead(id: string, serviceUUID: string, characteristicUUID: string): Promise<BluetoothDeviceCharacteristic | null>;
+
+    /**
+     * Get the service.
+     * @param id
+     * @param serviceUUID
+     */
+    getService(id: string, serviceUUID: string): BluetoothDeviceService;
+
+    /**
+     * Get the service.
+     * @param id
+     */
+    getServices(id: string): BluetoothDeviceService[];
+
+    /**
+     * Enables the notification.
+     * Returns true if the notification was successfully enabled.
+     * @param id
+     * @param serviceUUID
+     * @param characteristicUUID
+     * @param transactionId
+     */
+    enableNotification(id: string, serviceUUID: string, characteristicUUID: string, transactionId: string): boolean;
+
+    /**
+     * Disables the notification.
+     * Returns true if the notification was successfully disabled.
+     * @param id
+     * @param transactionId
+     */
+    disableNotification(id: string, transactionId: string): boolean;
 
     /**
      * Add a event listener to native.

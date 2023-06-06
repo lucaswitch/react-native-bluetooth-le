@@ -49,4 +49,16 @@ public class JsBluetoothDeviceService {
 
         return jsService;
     }
+
+    /**
+     * Gets the map of a bunch of services.
+     */
+    public static WritableArray getMap(List<BluetoothGattService> services) {
+        WritableArray jsServices = Arguments.createArray();
+        for (BluetoothGattService service : services) {
+            jsServices.pushMap(JsBluetoothDeviceService.getMap(service));
+        }
+
+        return jsServices;
+    }
 }

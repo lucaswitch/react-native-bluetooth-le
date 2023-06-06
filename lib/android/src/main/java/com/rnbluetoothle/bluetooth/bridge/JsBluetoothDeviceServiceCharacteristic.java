@@ -69,6 +69,7 @@ public class JsBluetoothDeviceServiceCharacteristic {
     public static WritableMap getMap(BluetoothGattCharacteristic characteristic) {
         WritableMap jsCharacteristic = Arguments.createMap();
         jsCharacteristic.putString("id", characteristic.getUuid().toString());
+        jsCharacteristic.putNull("value");
 
         // Permissions
         WritableArray jsCharacteristicPermissions = Arguments.createArray();
@@ -93,6 +94,22 @@ public class JsBluetoothDeviceServiceCharacteristic {
         }
         jsCharacteristic.putArray("descriptors", jsCharacteristicDescriptors);
 
+        return jsCharacteristic;
+    }
+
+    /**
+     * Gets the map with value, descriptors and permissions are removed if so.
+     */
+    public static WritableMap getMap(BluetoothGattCharacteristic characteristic, byte[] value) {
+        WritableMap jsCharacteristic = JsBluetoothDeviceServiceCharacteristic.getMap(characteristic);
+        jsCharacteristic.putString("id", characteristic.getUuid().toString());
+        WritableArray jsCharacteristicValue = Arguments.createArray();
+        if (value != null) {
+            for (int i = 0; i < value.length; i++) {
+                jsCharacteristicValue.pushInt(value[i] & 0xFF);
+            }
+        }
+        jsCharacteristic.putArray("value", jsCharacteristicValue);
         return jsCharacteristic;
     }
 }
