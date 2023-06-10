@@ -23,100 +23,120 @@ export default function Capabilities() {
 
   return (
     <List
-      sx={{ width: '100%', maxWidth: 320, bgcolor: 'background.paper' }}
+      sx={{width: '100%', maxWidth: 320, bgcolor: 'background.paper'}}
       component="nav"
       aria-labelledby="nested-list-subheader"
     >
       <ListItemButton sx={styleSx} onClick={() => setOpen(!open)}>
         <ListItemIcon>
-          <SubjectIcon sx={{ fontSize: 20, color:'#b33ce6'}} />
-        </ListItemIcon >
+          <SubjectIcon sx={{fontSize: 20, color: '#b33ce6'}}/>
+        </ListItemIcon>
         <ListItemText
-            sx={{ my: 0 }}
-            primary="Capabilities"
-            primaryTypographyProps={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                letterSpacing: 0,
-            }}
-            />
-        {open ? <ExpandLess /> : <ExpandMore />}
+          sx={{my: 0}}
+          primary="Capabilities"
+          primaryTypographyProps={{
+            fontSize: 16,
+            fontWeight: 'bold',
+            letterSpacing: 0,
+          }}
+        />
+        {open ? <ExpandLess/> : <ExpandMore/>}
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/bluetoothAdapter" ? "font-bold text-white bg-[#b33ce6] " : ""}>
-            <ListItemIcon>
-            </ListItemIcon>
-            <Link href='/capabilities/bluetoothAdapter'>
+          <Link href='/capabilities/bluetoothAdapter'>
+
+            <ListItemButton sx={styleSx}
+                            className={router.pathname === "/capabilities/bluetoothAdapter" ? "font-bold text-white bg-[#b33ce6] " : ""}>
+              <ListItemIcon>
+              </ListItemIcon>
               <ListItemText primary="Bluetooth Adapter"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              letterSpacing: 0,}}
+                              letterSpacing: 0,
+                            }}
               />
-            </Link>
 
-          </ListItemButton>
+            </ListItemButton>
+          </Link>
+
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/bluetoothState" ? "bg-[#b33ce6] font-bold text-white" : ""}>
-            <ListItemIcon>
-            </ListItemIcon>
-            <Link href='/capabilities/bluetoothState'>
+          <Link href='/capabilities/bluetoothState'>
+
+            <ListItemButton sx={styleSx}
+                            className={router.pathname === "/capabilities/bluetoothState" ? "bg-[#b33ce6] font-bold text-white" : ""}>
+              <ListItemIcon>
+              </ListItemIcon>
               <ListItemText primary="Bluetooth State"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              letterSpacing: 0,}}
+                              letterSpacing: 0,
+                            }}
               />
-            </Link>
 
-          </ListItemButton>
+            </ListItemButton>
+          </Link>
+
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/bonding" ? "bg-[#b33ce6] font-bold text-white" : ""}>
-            <ListItemIcon>
-            </ListItemIcon>
-            <Link href='/capabilities/bonding'>
+          <Link href='/capabilities/bonding'>
+
+            <ListItemButton sx={styleSx}
+                            className={router.pathname === "/capabilities/bonding" ? "bg-[#b33ce6] font-bold text-white" : ""}>
+              <ListItemIcon>
+              </ListItemIcon>
               <ListItemText primary="Bonding Button"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              letterSpacing: 0,}}
+                              letterSpacing: 0,
+                            }}
               />
-            </Link>
 
-          </ListItemButton>
+            </ListItemButton>
+          </Link>
+
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/discovery" ? "bg-[#b33ce6] font-bold text-white" : ""}>
-            <ListItemIcon>
-            </ListItemIcon>
-            <Link href='/capabilities/discovery'>
+          <Link href='/capabilities/discovery'>
+
+            <ListItemButton sx={styleSx}
+                            className={router.pathname === "/capabilities/discovery" ? "bg-[#b33ce6] font-bold text-white" : ""}>
+              <ListItemIcon>
+              </ListItemIcon>
               <ListItemText primary="Discovery"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              letterSpacing: 0,}}
+                              letterSpacing: 0,
+                            }}
               />
-            </Link>
 
-          </ListItemButton>
+            </ListItemButton>
+          </Link>
+
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/capabilities/types" ? "bg-[#b33ce6] font-bold text-white" : ""}>
-            <ListItemIcon>
-            </ListItemIcon>
-            <Link href='/capabilities/types'>
+          <Link href='/capabilities/types'>
+
+            <ListItemButton sx={styleSx}
+                            className={router.pathname === "/capabilities/types" ? "bg-[#b33ce6] font-bold text-white" : ""}>
+              <ListItemIcon>
+              </ListItemIcon>
               <ListItemText primary="Types"
                             primaryTypographyProps={{
                               fontSize: 12,
-                              letterSpacing: 0,}}
+                              letterSpacing: 0,
+                            }}
               />
-            </Link>
 
-          </ListItemButton>
+            </ListItemButton>
+          </Link>
+
         </List>
 
       </Collapse>

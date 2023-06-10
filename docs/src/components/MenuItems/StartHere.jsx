@@ -49,33 +49,37 @@ export default function StartHere() {
       <Collapse in={open} timeout="auto" unmountOnExit>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/gettingStarted" ? "bg-[#b33ce6]" : ""} >
-            <ListItemIcon>
-            </ListItemIcon>
+          <Link href='/gettingStarted'>
+            <ListItemButton sx={styleSx} className={router.pathname === "/gettingStarted" ? "bg-[#b33ce6]" : ""} >
+              <ListItemIcon>
+              </ListItemIcon>
 
-            <Link href='/gettingStarted'>
-              <ListItemText primary="Getting Started"
-                            primaryTypographyProps={{
-                              fontSize: 12,
-                              letterSpacing: 0,}}
-              />
-            </Link>
-          </ListItemButton>
+
+                <ListItemText primary="Getting Started"
+                              primaryTypographyProps={{
+                                fontSize: 12,
+                                letterSpacing: 0,}}
+                />
+            </ListItemButton>
+          </Link>
+
         </List>
 
         <List component="div1" disablePadding>
-          <ListItemButton sx={styleSx} className={router.pathname === "/imperative" ? "bg-[#b33ce6]" : ""}>
-            <ListItemIcon>
-            </ListItemIcon>
-            <Link href='/imperative'>
-              <ListItemText primary="Imperative API"
-                            primaryTypographyProps={{
-                              fontSize: 12,
-                              letterSpacing: 0,}}
-              />
-            </Link>
+          <Link href='/imperative'>
 
-          </ListItemButton>
+            <ListItemButton sx={styleSx} className={router.pathname === "/imperative" ? "bg-[#b33ce6]" : ""}>
+              <ListItemIcon>
+              </ListItemIcon>
+                <ListItemText primary="Imperative API"
+                              primaryTypographyProps={{
+                                fontSize: 12,
+                                letterSpacing: 0,}}
+                />
+
+            </ListItemButton>
+          </Link>
+
         </List>
 
       </Collapse>
