@@ -37,9 +37,9 @@ const TrackingBar = ({topicsTitles}) => {
               <a href={`#section${index + 1}`}
                  className={`${activeSection === `section${index + 1}` ? 'no-underline' : 'hover:underline no-underline'}`}>
                 <li key={index}
-                    className={`flex flex-row py-2 pl-4 ${activeSection === `section${index + 1}` 
+                    className={`flex flex-row py-2  ${activeSection === `section${index + 1}` 
                       ? 'bg-[#b33ce6] text-white  font-bold' 
-                      : 'group text-black pl-2'}`}
+                      : 'group text-black '}`}
                 >
                   {activeSection !== `section${index + 1}` &&
                     <div className={`${activeSection !== `section${index + 1}`
@@ -48,7 +48,7 @@ const TrackingBar = ({topicsTitles}) => {
                   }
 
 
-                  <div className={'ml-4'}>
+                  <div className={'ml-6'}>
                     {title}
                   </div>
                 </li>
