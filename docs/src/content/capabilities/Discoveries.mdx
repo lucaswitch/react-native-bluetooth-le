@@ -1,23 +1,26 @@
-#### Discovery
+<section id="section1" className="section">
+  ## Discovery
 
-```js
+  ```js
   import {Bluetooth} from "react-native-bluetooth-le";
 
   useEffect(() => {
-        // Handle discovery.
-        if (allowed && enabled) {
-            const unsubscribe = Bluetooth.onDiscovery((nearbyDevices) => {
+  // Handle discovery.
+  if (allowed && enabled) {
+  const unsubscribe = Bluetooth.onDiscovery((nearbyDevices) => {
 
-                setDevices([...nearbyDevices]);
-            })
-            setDiscovering(true);
-            return () => {
-                setDiscovering(false);
-                setDevices([])
-                unsubscribe();
-            }
-        }
-    }, [enabled, allowed])
-```
+  setDevices([...nearbyDevices]);
+})
+  setDiscovering(true);
+  return () => {
+  setDiscovering(false);
+  setDevices([])
+  unsubscribe();
+}
+}
+}, [enabled, allowed])
+  ```
+</section>
+
 
 export default ({children}) => <div className='prose'>{children}</div>

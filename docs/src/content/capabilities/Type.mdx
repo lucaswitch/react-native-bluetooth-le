@@ -1,31 +1,32 @@
-#### Types
+<section id="section1" className="section">
+  ## Types
 
-```js
+  ```js
   export type AdapterStatusEvent = {
-    status: "on" | "off" | "not_supported"
-  }
+  status: "on" | "off" | "not_supported"
+}
 
   export type BluetoothDevice = {
-    id: string | null,
-    name: string | null,
-    address: string,
-    type: BluetoothDeviceSupport,
-    bond: BluetoothDeviceBondStatus,
-    rssi: number,
-    dbm: number
-  };
+  id: string | null,
+  name: string | null,
+  address: string,
+  type: BluetoothDeviceSupport,
+  bond: BluetoothDeviceBondStatus,
+  rssi: number,
+  dbm: number
+};
 
   export type BluetoothDeviceService = {
-    id: string
-    type: "primary" | "secondary",
-    characteristics: BluetoothDeviceCharacteristic[]
-  }
+  id: string
+  type: "primary" | "secondary",
+  characteristics: BluetoothDeviceCharacteristic[]
+}
 
   export type BluetoothDeviceCharacteristic = {
-    id: string
-    permissions: BluetoothDeviceCharacteristicPermissions,
-    value: BluetoothDeviceCharacteristicValue
-  }
+  id: string
+  permissions: BluetoothDeviceCharacteristicPermissions,
+  value: BluetoothDeviceCharacteristicValue
+}
 
   export type BluetoothDeviceCharacteristicValue = number[] | null;
 
@@ -40,8 +41,10 @@
   export type BluetoothDeviceSupport = "le" | "dual" | "unknown";
 
   export type BluetoothConnectionStatusEvent = {
-    status: BluetoothDeviceConnectionStatus
-  }
-```
+  status: BluetoothDeviceConnectionStatus
+}
+  ```
+</section>
+
 
 export default ({children}) => <div className='prose'>{children}</div>

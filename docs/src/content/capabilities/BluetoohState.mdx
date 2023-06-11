@@ -1,22 +1,25 @@
-#### Get bluetooth State
+<section id="section1" className="section">
+  ## Get bluetooth State
 
-```js
+  ```js
   import {Bluetooth} from "react-native-bluetooth-le";
 
   useEffect(() => {
-        // Listen to any bluetooth power status.
-        if (allowed) {
-            const unsubscribe = Bluetooth.onStateChange(({status}) => {
-                setState(status);
-            })
+  // Listen to any bluetooth power status.
+  if (allowed) {
+  const unsubscribe = Bluetooth.onStateChange(({status}) => {
+  setState(status);
+})
 
-            setName(Bluetooth.getName());
-            setAddress(Bluetooth.getAddress())
-            return () => {
-                unsubscribe();
-            }
-        }
-    }, [])
-```
+  setName(Bluetooth.getName());
+  setAddress(Bluetooth.getAddress())
+  return () => {
+  unsubscribe();
+}
+}
+}, [])
+  ```
+</section>
+
 
 export default ({children}) => <div className='prose'>{children}</div>

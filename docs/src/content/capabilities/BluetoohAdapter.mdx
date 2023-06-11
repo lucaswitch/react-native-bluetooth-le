@@ -1,74 +1,81 @@
-#### Whether bluetooth adapter is enabled
+<section id="section1" className="section">
+  ## Whether bluetooth adapter is enabled
 
-```js
+  ```js
   import {getIsEnabled} from 'react-native-bluetooth-le';
 
   getIsEnabled(); // "on" or "off"
 
-```
+  ```
+</section>
+<section id="section2" className="section">
+  ## Gets whether bluetooth adapter has low energy support
 
-#### Gets whether bluetooth adapter has low energy support
-
-```js
+  ```js
   import {getIsSupported} from 'react-native-bluetooth-le';
 
   getIsSupported(); // true or false, true if is current device supports bluetooth low energy operations.
-```
+  ```
+</section>
+<section id="section3" className="section">
+  ## Gets bluetooth adapter name and address
 
-#### Gets bluetooth adapter name and address
+  For the user security, make sure to ask the user common bluetooth permissions.
 
-For the user security, make sure to ask the user common bluetooth permissions.
-
-```js
+  ```js
   import {getName, getAddress} from 'react-native-bluetooth-le';
 
   getName(); // "Samsung S21..."
   getAddress(); // "00:00:00:00:21" Mac address for Android and UUID for some most recent IOS versions.
-```
+  ```
+</section>
+<section id="section4" className="section">
+  ## Gets whether location is enabled
 
-#### Gets whether location is enabled
+  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
 
-In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
-
-```js
+  ```js
   import {getIsLocationEnabled} from 'react-native-bluetooth-le';
 
   getIsLocationEnabled(); // "on" or "off"
 
-```
+  ```
+</section>
+<section id="section5" className="section">
+  ## Listen to bluetooth adapter sudden state change
 
-#### Listen to bluetooth adapter sudden state change
+  In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
 
-In some operations it's necessary to access user location. To know if user already authorized location fetching use the following method:
-
-```js
+  ```js
   import {onStateChange} from 'react-native-bluetooth-le';
 
   const unsubscribe = onStateChange(({status})=>{
-    console.log(status): // "on" or "off"
-  });
+  console.log(status): // "on" or "off"
+});
 
   // Make sure to "unsubscribe" this event later to avoid listen unnecessary state changes.
 
   unsubscribe(); // Remove registered listener.
-```
+  ```
+</section>
+<section id="section6" className="section">
+  ## Listen bluetooth discovery and find nearby devices
 
-#### Listen bluetooth discovery and find nearby devices
-
-Starts to listen nearby devices using "bluetooth scan".
-Make sure to enable this functionality on your app for a small period of time since it's consumes too much battery.
-Android Notes:
-Make sure to ask the user to enable location since bluetooth scan operations can expose user location to nearby devices.
-```js
+  Starts to listen nearby devices using "bluetooth scan".
+  Make sure to enable this functionality on your app for a small period of time since it's consumes too much battery.
+  Android Notes:
+  Make sure to ask the user to enable location since bluetooth scan operations can expose user location to nearby devices.
+  ```js
   import {onDiscovery} from 'react-native-bluetooth-le';
 
 
   const unsubscribe = onDiscovery((devices = [])=>{
-     console.log(devices); // This devices is filtered by it's mac address and never will be sent repeated.
-  });
+  console.log(devices); // This devices is filtered by it's mac address and never will be sent repeated.
+});
 
   // Make sure to "unsubscribe" this event later to avoid listen discovery.
   unsubscribe(); // Remove registered listener.
-```
+  ```
+</section>
 
 export default ({children}) => <div className='prose'>{children}</div>
