@@ -1,12 +1,14 @@
 package com.rnbluetoothle.bluetooth.receivers;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 
-/**
+/*
  * Responsible to deal with transactions based receivers.
  * A transaction receiver must have a string that identifies itself.
  */
@@ -37,7 +39,7 @@ public class TransactionReceiver extends BroadcastReceiver {
      */
     public void register() {
         this.reactContext.registerReceiver(this, this.createIntentFilter());
-        Log.v("Bluetooth", "Events registered for transaction " + this.transactionId);
+        Log.v("Bluetooth", "Events registered for transaction " + this.transactionId + " for class " + this.getClass().getName());
     }
 
     /**
@@ -46,5 +48,9 @@ public class TransactionReceiver extends BroadcastReceiver {
     public void unregister() {
         this.reactContext.unregisterReceiver(this);
         Log.v("Bluetooth", "Events unregistered for transaction " + this.transactionId);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
     }
 }

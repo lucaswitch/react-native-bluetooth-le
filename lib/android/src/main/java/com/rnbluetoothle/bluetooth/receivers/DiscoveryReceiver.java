@@ -7,13 +7,15 @@ import android.content.Intent;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDevice;
 import com.rnbluetoothle.bluetooth.bridge.JsEventDispatcher;
+import com.rnbluetoothle.bluetooth.receivers.TransactionReceiver;
+
 
 /**
  * Receiver responsible to sending discovery(scan) events.
  */
 public class DiscoveryReceiver extends TransactionReceiver {
 
-    final protected String EVENT_ON_DISCOVERY = "rnbluetoothle.onDiscovery";
+    protected String EVENT_ON_DISCOVERY = "rnbluetoothle.onDiscovery";
 
     public DiscoveryReceiver(ReactApplicationContext context, String transactionId) {
         super(context, transactionId);

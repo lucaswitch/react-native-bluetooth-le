@@ -10,7 +10,11 @@ import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 
+
+import com.rnbluetoothle.bluetooth.bridge.JsEventDispatcher;
 import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDevice;
+import com.rnbluetoothle.bluetooth.receivers.TransactionReceiver;
+
 
 /**
  * Deals with a single device connection changes events.
@@ -37,11 +41,11 @@ public class ChangeReceiver extends TransactionReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        BluetoothDevice receivedDevice = jsBluetoothDevice.getDevice(intent);
+        BluetoothDevice receivedDevice = JsBluetoothDevice.getDevice(intent);
         if (this.address.equals(receivedDevice.getAddress())) {
 
             JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);
-            this.sendJsModuleEvent(this.EVENT_ON_CHANGE, jsBluetoothDevice.getMap());
+            JsEventDispatcher.send(this.reactContext, this.EVENT_ON_CHANGE, jsBluetoothDevice.getMap());
         }
     }
 }

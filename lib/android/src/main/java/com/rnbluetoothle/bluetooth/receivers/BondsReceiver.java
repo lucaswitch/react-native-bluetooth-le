@@ -8,10 +8,11 @@ import android.content.Intent;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableArray;
+
 import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDevice;
 import com.rnbluetoothle.bluetooth.bridge.JsEventDispatcher;
-
 import com.rnbluetoothle.bluetooth.BluetoothState;
+import com.rnbluetoothle.bluetooth.receivers.TransactionReceiver;
 
 import java.util.Set;
 
@@ -43,6 +44,6 @@ public class BondsReceiver extends TransactionReceiver {
             jsBondedDevices.pushMap(jsBluetoothDevice.getMap());
         }
 
-        JsEventDispatcher.send(this.EVENT_ON_BONDED_DEVICES, jsBondedDevices);
+        JsEventDispatcher.send(this.reactContext, this.EVENT_ON_BONDED_DEVICES, jsBondedDevices);
     }
 }

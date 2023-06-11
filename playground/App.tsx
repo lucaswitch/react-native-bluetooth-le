@@ -6,8 +6,8 @@ function App(): JSX.Element {
         <SafeAreaView style={{flex: 1, backgroundColor: '#EAEAEA', padding: 6, gap: 10}}>
             <StatusBar backgroundColor="#EAEAEA" barStyle="dark-content"/>
             <BluetoothState/>
-            <Bonding/>
-            <Discovery/>
+            {/*<Bonding/>
+            <Discovery/>*/}
         </SafeAreaView>
     );
 }

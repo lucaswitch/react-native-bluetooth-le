@@ -1,9 +1,6 @@
-// @ts-ignore
 import type {TurboModule} from 'react-native/Libraries/TurboModule/RCTExport';
-// @ts-ignore
 import {TurboModuleRegistry} from 'react-native';
 import {
-    BluetoothConnectionPriority,
     BluetoothDevice,
     BluetoothDeviceCharacteristic,
     BluetoothDeviceService
@@ -97,7 +94,7 @@ export interface Spec extends TurboModule {
     /**
      * Stablish a GATT connection with remote device.
      */
-    connect(id: string, priority?: BluetoothConnectionPriority): Promise<void>;
+    connect(id: string): Promise<void>;
 
     /**
      * Removes the current GATT connection with remote device.
@@ -105,22 +102,24 @@ export interface Spec extends TurboModule {
     disconnect(id: string): Promise<void>;
 
     /**
-     * Gets the characteristic value.
+     * Get the characteristic.
+     * Returns a array with the characteristic.
      * @param id
      * @param serviceUUID
      * @param characteristicUUID
      */
-    onCharacteristicRead(id: string, serviceUUID: string, characteristicUUID: string): Promise<BluetoothDeviceCharacteristic | null>;
+    getCharacteristic(id: string, serviceUUID: string, characteristicUUID: string): BluetoothDeviceCharacteristic[];
 
     /**
      * Get the service.
+     * Returns a array with the service.
      * @param id
      * @param serviceUUID
      */
-    getService(id: string, serviceUUID: string): BluetoothDeviceService;
+    getService(id: string, serviceUUID: string): BluetoothDeviceService[];
 
     /**
-     * Get the service.
+     * Get the services.
      * @param id
      */
     getServices(id: string): BluetoothDeviceService[];
@@ -142,6 +141,15 @@ export interface Spec extends TurboModule {
      * @param transactionId
      */
     disableNotification(id: string, transactionId: string): boolean;
+
+    /**
+     * Writes the characteristic value.
+     * @param id
+     * @param serviceUUID
+     * @param characteristicUUID
+     * @param value
+     */
+    writeValue(id: string, serviceUUID: string, characteristicUUID: string, value: number[]): boolean;
 
     /**
      * Add a event listener to native.

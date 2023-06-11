@@ -8,6 +8,10 @@ import android.content.Intent;
 import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDevice;
 import com.facebook.react.bridge.ReactApplicationContext;
 
+import com.rnbluetoothle.bluetooth.receivers.TransactionReceiver;
+import com.rnbluetoothle.bluetooth.bridge.JsEventDispatcher;
+
+
 /**
  * Deals with a single device connection and disconnection events.
  */
@@ -23,8 +27,7 @@ public class ConnectionReceiver extends TransactionReceiver {
         };
         this.address = address;
 
-        this.EVENT_ON_CONNECT += transactionId;
-        this.EVENT_ON_DISCONNECT += transactionId;
+        this.EVENT_ON_CONNECTION_CHANGE += transactionId;
     }
 
     /**
@@ -42,11 +45,11 @@ public class ConnectionReceiver extends TransactionReceiver {
             if (action.equals(BluetoothDevice.ACTION_ACL_CONNECTED)) {
 
                 JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);
-                this.sendJsModuleEvent(this.reactContext, this.EVENT_ON_CONNECT, jsBluetoothDevice.getMap());
+                JsEventDispatcher.send(this.reactContext, this.EVENT_ON_CONNECTION_CHANGE, jsBluetoothDevice.getMap());
             } else if (action.equals(BluetoothDevice.ACTION_ACL_DISCONNECTED)) {
 
                 JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);
-                this.sendJsModuleEvent(this.EVENT_ON_DISCONNECT, jsBluetoothDevice.getMap());
+                JsEventDispatcher.send(this.reactContext, this.EVENT_ON_CONNECTION_CHANGE, jsBluetoothDevice.getMap());
             }
         }
     }

@@ -1,13 +1,12 @@
 package com.rnbluetoothle.bluetooth.bridge;
 
-import android.bluetooth.BluetoothDevice;
-import android.content.Intent;
 import android.bluetooth.BluetoothAdapter;
 
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableNativeMap;
+
+import com.rnbluetoothle.bluetooth.BluetoothState;
+import com.facebook.react.bridge.ReactApplicationContext;
 
 /**
  * Responsible to convert to Js Object corresponding to current adapter state.
@@ -19,8 +18,9 @@ public class JsBluetoothState {
      *
      * @return
      */
-    public static WritableMap getMap() {
-        int state = bluetoothAdapter.getState();
+    public static WritableMap getMap(ReactApplicationContext context) {
+        BluetoothState bluetoothState = new BluetoothState(context);
+        int state = bluetoothState.getSystemDefaultAdapter().getState();
         WritableMap map = Arguments.createMap();
 
         switch (state) {

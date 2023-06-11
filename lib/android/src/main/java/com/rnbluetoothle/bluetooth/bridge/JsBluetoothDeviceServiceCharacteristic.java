@@ -7,6 +7,8 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDeviceDescriptor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class JsBluetoothDeviceServiceCharacteristic {
      * - read
      * - write
      */
-    private static List<String> getPermission(BluetoothGattDescriptor descriptor) {
+    public static List<String> getPermissions(BluetoothGattDescriptor descriptor) {
         List<String> propertiesList = new ArrayList<>();
 
         int permissions = descriptor.getPermissions();
@@ -81,17 +83,9 @@ public class JsBluetoothDeviceServiceCharacteristic {
         // Descriptors
         WritableArray jsCharacteristicDescriptors = Arguments.createArray();
         for (BluetoothGattDescriptor descriptor : characteristic.getDescriptors()) {
-            WritableMap jsCharacteristicDescriptor = Arguments.createArray();
-            jsCharacteristicDescriptor.putString("id", descriptor.getUuid().toString());
-
-            // Permissions
-            WritableArray jsCharacteristicDescriptorPermissions = Arguments.createArray();
-            for (String permission : JsBluetoothDeviceServiceCharacteristic.getPermissions(descriptor)) {
-                jsCharacteristicDescriptorPermissions.pushString(permission);
-            }
-            jsCharacteristicDescriptor.putArray("permissions", jsCharacteristicDescriptorPermissions);
-            jsCharacteristicDescriptors.pushArray(jsCharacteristicDescriptor);
+            jsCharacteristicDescriptors.pushMap(JsBluetoothDeviceDescriptor.getMap(descriptor));
         }
+
         jsCharacteristic.putArray("descriptors", jsCharacteristicDescriptors);
 
         return jsCharacteristic;

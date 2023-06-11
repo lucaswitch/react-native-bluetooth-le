@@ -49,6 +49,7 @@ export function BluetoothState() {
         // Listen to any bluetooth power status.
         if (allowed) {
             const unsubscribe = Bluetooth.onStateChange(({status}) => {
+                console.log({status})
                 setState(status);
             })
 
@@ -58,7 +59,7 @@ export function BluetoothState() {
                 unsubscribe();
             }
         }
-    }, [allowed, askBluetoothPermissions])
+    }, [allowed])
 
     return <>
         <Card>

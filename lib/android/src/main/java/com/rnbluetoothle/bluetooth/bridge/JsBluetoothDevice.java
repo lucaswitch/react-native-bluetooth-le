@@ -31,7 +31,7 @@ public class JsBluetoothDevice {
      * @return
      */
     public static BluetoothDevice getDevice(Intent intent) {
-        BluetoothDevice device;
+        BluetoothDevice device = null;
         if (intent != null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
@@ -50,6 +50,9 @@ public class JsBluetoothDevice {
     public WritableMap getMap() {
         WritableMap payload = new WritableNativeMap();
         BluetoothDevice device = JsBluetoothDevice.getDevice(this.intent);
+        if (this.device != null) {
+            device = this.device;
+        }
 
         String deviceType;
         switch (device.getType()) {

@@ -3,13 +3,13 @@ package com.rnbluetoothle.bluetooth.receivers;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableMap;
 
 import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDevice;
 import com.rnbluetoothle.bluetooth.bridge.JsEventDispatcher;
+import com.rnbluetoothle.bluetooth.receivers.TransactionReceiver;
 
 
 /**
@@ -34,12 +34,12 @@ public class BondReceiver extends TransactionReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        BluetoothDevice receivedDevice = jsBluetoothDevice.getDevice(intent);
+        BluetoothDevice receivedDevice = JsBluetoothDevice.getDevice(intent);
         if (this.address.equals(receivedDevice.getAddress())) {
             JsBluetoothDevice jsBluetoothDevice = new JsBluetoothDevice(intent);
             WritableMap data = jsBluetoothDevice.getMap();
 
-            JsEventDispatcher.send(this.EVENT_ON_BOND_CHANGE, data);
+            JsEventDispatcher.send(this.reactContext, this.EVENT_ON_BOND_CHANGE, data);
         }
     }
 }

@@ -12,16 +12,16 @@ export type BluetoothDevice = {
     dbm: number
 };
 
-export type BluetoothDeviceService = {
-    id: string
-    type: "primary" | "secondary",
-    characteristics: BluetoothDeviceCharacteristic[]
-}
-
 export type BluetoothDeviceCharacteristic = {
-    id: string
+    id: string,
     permissions: BluetoothDeviceCharacteristicPermissions,
     value: BluetoothDeviceCharacteristicValue
+}
+
+export type BluetoothDeviceService = {
+    id: string,
+    type: "primary" | "secondary",
+    characteristics: BluetoothDeviceCharacteristic[]
 }
 
 export type BluetoothDeviceCharacteristicValue = number[] | null;

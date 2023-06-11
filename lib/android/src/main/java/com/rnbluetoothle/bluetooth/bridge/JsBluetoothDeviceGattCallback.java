@@ -6,35 +6,33 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothStatusCodes;
+import android.os.Build;
 import android.util.Log;
-import android.content.Intent;
 
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableArray;
 
 import com.rnbluetoothle.bluetooth.GattHelper;
-import com.rnbluetoothle.bluetooth.bridge.errors.JsDiscoveryError;
-import com.rnbluetoothle.bluetooth.bridge.JsEventDispatcher;
 import com.rnbluetoothle.bluetooth.bridge.JsBluetoothConnectionState;
-import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDeviceService;
-import com.rnbluetoothle.bluetooth.bridge.JsBluetoothDeviceServiceCharacteristic;
+import com.rnbluetoothle.bluetooth.bridge.JsEventDispatcher;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Responsible to deal with BluetoothDevice GATT events.
  * Once the GATT is connected then it can send JS events.
  */
-public class JsDeviceGattCallback extends BluetoothGattCallback {
+public class JsBluetoothDeviceGattCallback extends BluetoothGattCallback {
 
-    private List<Map<String, String>> notifications;
-    protected String EVENT_PREFIX_ON_NOTIFY = "rnbluetoothle.onMonitorValue/";
+    final private List<Map<String, String>> notifications;
+
+    final protected String EVENT_ON_NOTIFY = "rnbluetoothle.onMonitorValue/";
+    final protected String EVENT_ON_CHANGE = "rnbluetoothle.onChange/";
 
     /**
      * React application context.
@@ -43,12 +41,12 @@ public class JsDeviceGattCallback extends BluetoothGattCallback {
     protected int prevConnectionState;
     protected String address;
 
-    public JsDeviceGattCallback(ReactApplicationContext context, String address) {
+    public JsBluetoothDeviceGattCallback(ReactApplicationContext context, String address) {
         super();
         this.address = address;
         this.reactContext = context;
 
-        this.notifications = new ArrayList();
+        this.notifications = new ArrayList<>();
     }
 
     /**
@@ -65,13 +63,16 @@ public class JsDeviceGattCallback extends BluetoothGattCallback {
             gatt.discoverServices(); // Automatically discover remote device services when connected.
         }
 
-        JsBluetoothConnectionState jsBluetoothConnectionState = new JsBluetoothConnectionState(
-                newConnectionState,
-                this.prevConnectionState);
+        JsBluetoothConnectionState jsBluetoothConnectionState =
+                new JsBluetoothConnectionState(
+                        newConnectionState,
+                        this.prevConnectionState
+                );
         JsEventDispatcher.send(
                 this.reactContext,
-                this.EVENT_ON_CONNECTION_CHANGE,
-                jsBluetoothConnectionState.getMap());
+                this.EVENT_ON_CHANGE,
+                jsBluetoothConnectionState.getMap()
+        );
     }
 
     /**
@@ -81,7 +82,7 @@ public class JsDeviceGattCallback extends BluetoothGattCallback {
      */
     @Override
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-
+        /*
         JsDiscoveryError jsDiscoveryError;
         switch (status) {
             case BluetoothGatt.GATT_SUCCESS:
@@ -148,6 +149,7 @@ public class JsDeviceGattCallback extends BluetoothGattCallback {
             default:
                 break;
         }
+         */
     }
 
     /**
@@ -159,39 +161,6 @@ public class JsDeviceGattCallback extends BluetoothGattCallback {
     }
 
     /**
-     * On device characteristic value read.
-     */
-    @Override
-    public void onCharacteristicRead(
-            BluetoothGatt gatt,
-            BluetoothGattCharacteristic characteristic,
-            byte[] value,
-            int status) {
-
-        // Deal with characteristic read promises.
-        if (BluetoothGatt.GATT_SUCCESS == status) {
-
-            Iterator<String> iterator = list.iterator();
-            while (iterator.hasNext()) {
-                Promise promise = iterator.next();
-                iterator.remove();
-                promise.resolve(
-                        JsBluetoothDeviceServiceCharacteristic.getMap(characteristic, value));
-            }
-        } else {
-
-            Iterator<String> iterator = list.iterator();
-            while (iterator.hasNext()) {
-                Promise promise = iterator.next();
-                iterator.remove();
-
-                promise.reject(
-                        500, "Unable to read characteristic.");
-            }
-        }
-    }
-
-    /**
      * On device characteristic value just changed.
      */
     @Override
@@ -200,22 +169,79 @@ public class JsDeviceGattCallback extends BluetoothGattCallback {
         BluetoothGattService service = characteristic.getService();
         for (Map<String, String> notification : this.notifications) {
             String serviceUUID = notification.get("serviceUUID");
-            if (serviceUUID.equals(service.getUuid().toString())) {
+            if (serviceUUID != null && serviceUUID.equals(service.getUuid().toString())) {
                 String characteristicUUID = notification.get("characteristicUUID");
-                if (characteristicUUID.equals(characteristic.getUuid().toString())) {
-                    String event = this.EVENT_PREFIX_ON_NOTIFY + notification.getKey();
+                if (characteristicUUID != null && characteristicUUID.equals(characteristic.getUuid().toString())) {
+                    String event = this.EVENT_ON_NOTIFY + notification.get("transactionId");
                     JsEventDispatcher.send(this.reactContext, event, value);
                 }
             }
         }
     }
 
-    /* ----------------------- Imperative Methods ------------------------------- */
+    /* ----------------------- Imperative Methods ----------------------- */
+
+    /**
+     * Writes the value into characteristic.
+     *
+     * @param gatt
+     * @param serviceUUID
+     * @param characteristicUUID
+     * @param value
+     * @return
+     */
+    public boolean writeCharacteristic(BluetoothGatt gatt,
+                                       String serviceUUID,
+                                       String characteristicUUID,
+                                       byte[] value) {
+        BluetoothGattCharacteristic characteristic = GattHelper.getCharacteristic(gatt, serviceUUID, characteristicUUID);
+        if (characteristic != null) {
+            if (Build.VERSION.SDK_INT < 33) {
+                characteristic.setValue(value);
+                return gatt.writeCharacteristic(characteristic);
+            } else {
+                return BluetoothStatusCodes.SUCCESS == gatt.writeCharacteristic(characteristic, value, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Writes the value into characteristic.
+     *
+     * @param gatt
+     * @param serviceUUID
+     * @param characteristicUUID
+     * @param value
+     * @return
+     */
+
+    public boolean writeCharacteristic(BluetoothGatt gatt,
+                                       String serviceUUID,
+                                       String characteristicUUID,
+                                       int[] value) {
+        byte[] byteArr = new byte[value.length];
+        for (int i = 0; i < byteArr.length; i++) {
+            byteArr[i] = (byte) value[i];
+        }
+        return this.writeCharacteristic(gatt, serviceUUID, characteristicUUID, byteArr);
+    }
+
+    public boolean writeCharacteristic(BluetoothGatt gatt,
+                                       String serviceUUID,
+                                       String characteristicUUID,
+                                       ReadableArray value) {
+        int length = value.size();
+        byte[] byteArr = new byte[length];
+        for (int i = 0; i < length; i++) {
+            byteArr[i] = (byte) value.getInt(i);
+        }
+        return this.writeCharacteristic(gatt, serviceUUID, characteristicUUID, byteArr);
+    }
 
     /**
      * Enables notification for characteristic.
-     * 
-     * @param transactionId
+     *
      * @return True if successfully enabled notification for characteristic.
      */
     public boolean addCharacteristicNotification(
@@ -224,23 +250,25 @@ public class JsDeviceGattCallback extends BluetoothGattCallback {
             String characteristicUUID,
             String transactionId) {
 
-        BluetoothGattCharacteristic characteristic = GattHelper.getCharacteristic(
-                gatt,
-                serviceUUID,
-                characteristicUUID);
+        BluetoothGattCharacteristic characteristic =
+                GattHelper.getCharacteristic(
+                        gatt,
+                        serviceUUID,
+                        characteristicUUID
+                );
 
         if (characteristic != null) {
             boolean isNotifying = (characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0;
-            Map event = new HashMap<String, String>();
+            Map<String, String> event = new HashMap<>();
             event.put("characteristicUUID", characteristicUUID);
             event.put("serviceUUID", serviceUUID);
+            event.put("transactionID", transactionId);
 
             if (isNotifying) {
-                this.notifications.add(transactionId, event);
+                this.notifications.add(event);
                 return true;
-            }
-            if (bluetoothGatt.setCharacteristicNotification(characteristic, true)) {
-                this.notifications.add(transactionId, event);
+            } else if (gatt.setCharacteristicNotification(characteristic, true)) {
+                this.notifications.add(event);
                 return true;
             }
         }
@@ -251,13 +279,14 @@ public class JsDeviceGattCallback extends BluetoothGattCallback {
     /**
      * Disables notification for characteristic.
      * If the transaction does not exists or it's cancelled safely returns true.
-     * 
      */
     public boolean removeCharacteristicNotification(
             BluetoothGatt gatt,
-            String transactionId) {
+            String transactionId
+    ) {
         for (Map<String, String> notification : this.notifications) {
-            if (notification.getKey().equals(transactionId)) {
+            String notificationTransactionId = notification.get("transactionId");
+            if (notificationTransactionId != null && notificationTransactionId.equals(transactionId)) {
 
                 String serviceUUID = notification.get("serviceUUID");
                 String characteristicUUID = notification.get("characteristicUUID");
@@ -267,15 +296,26 @@ public class JsDeviceGattCallback extends BluetoothGattCallback {
                         characteristicUUID);
 
                 if (characteristic != null) {
-                    boolean isNotifying = (characteristic.getProperties()
-                            & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0;
+                    boolean isNotifying =
+                            (characteristic.getProperties()
+                                    & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0;
 
                     if (isNotifying) {
-                        if (!bluetoothGatt.setCharacteristicNotification(characteristic, false)) {
+                        if (!gatt.setCharacteristicNotification(characteristic, false)) {
                             return false; // Could not cancel de notification.
                         }
                     }
-                    this.notifications.remove(transactionId);
+
+                    Iterator<Map<String, String>> iterator = this.notifications.iterator();
+                    while (iterator.hasNext()) {
+                        Map<String, String> map = iterator.next();
+                        String currentTransactionId = map.get("transactionId");
+                        if (currentTransactionId == null || currentTransactionId.equals(transactionId)) {
+                            iterator.remove();
+                            break;
+                        }
+                    }
+
                     return true;
                 }
                 return true;

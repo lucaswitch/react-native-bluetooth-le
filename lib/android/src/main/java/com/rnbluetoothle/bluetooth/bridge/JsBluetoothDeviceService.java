@@ -38,7 +38,7 @@ public class JsBluetoothDeviceService {
         WritableMap jsService = Arguments.createMap();
 
         jsService.putString("id", service.getUuid().toString());
-        jsService.putString("type", JsBluetoothDeviceService.getType(BluetoothGattService));
+        jsService.putString("type", JsBluetoothDeviceService.getType(service));
 
         // Characteristics
         WritableArray jsCharacteristics = Arguments.createArray();

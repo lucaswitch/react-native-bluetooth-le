@@ -5,11 +5,12 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
 import java.util.UUID;
+import java.util.List;
 
 public class GattHelper {
     /**
      * Gets the gatt characteristic in a imperative way.
-     * 
+     *
      * @param gatt
      * @param serviceUUID
      * @param characteristicUUID
@@ -27,7 +28,7 @@ public class GattHelper {
     /**
      * Gets the gatt characteristic in a imperative way.
      * Just a shortcut method to convert from String to UUID.
-     * 
+     *
      * @param gatt
      * @param serviceUUID
      * @param characteristicUUID
@@ -41,7 +42,7 @@ public class GattHelper {
 
     /**
      * Gets the gatt service in a imperative way.
-     * 
+     *
      * @param gatt
      * @param serviceUUID
      * @param characteristicUUID
@@ -59,8 +60,8 @@ public class GattHelper {
     /**
      * Gets the gatt service in a imperative way.
      * Just a shortcut method to convert from String to UUID
-     * 
-     * 
+     *
+     *
      * @param gatt
      * @param serviceUUID
      * @param characteristicUUID
@@ -71,7 +72,7 @@ public class GattHelper {
 
     /**
      * Get all gatt services in a imperative way.
-     * 
+     *
      */
     public static List<BluetoothGattService> getAllServices(BluetoothGatt gatt) {
         return gatt.getServices();
