@@ -1,11 +1,12 @@
 import React from "react";
 import Imper from "../content/Imper.mdx"
 import { Box, Toolbar} from "@mui/material";
+import TrackingBar from "@/components/TrackingBar";
 
 export default function Imperative() {
   return (
-    <div className="ml-60 prose prose-2xl">
-      <div className="flex ml-24 pr-64">
+    <div className="mx-auto prose prose-2xl">
+      <div className="flex justify-between w-full ml-24 pr-64">
         <div className="flex-row ">
           <Box
             component="main"
@@ -14,6 +15,11 @@ export default function Imperative() {
             <Toolbar />
             <Imper/>
           </Box>
+        </div>
+        <div >
+          <TrackingBar topicsTitles={[
+            'Imperative API',
+          ]}/>
         </div>
       </div>
     </div>

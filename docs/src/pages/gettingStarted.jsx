@@ -1,11 +1,12 @@
 import React from "react";
 import GS from "../content/GS.mdx"
 import { Box, Toolbar} from "@mui/material";
+import TrackingBar from "@/components/TrackingBar";
 
 export default function GettingStarted() {
   return (
-    <div className="ml-60 prose prose-2xl">
-      <div className="flex ml-24 pr-64">
+    <div className="mx-auto prose prose-2xl">
+      <div className="flex justify-between w-full ml-24 pr-64">
         <div className="flex-row ">
           <Box
             component="main"
@@ -14,6 +15,13 @@ export default function GettingStarted() {
             <Toolbar />
             <GS/>
           </Box>
+        </div>
+        <div >
+          <TrackingBar topicsTitles={[
+            'Introduction',
+            'Compatibility',
+            'Getting started'
+          ]}/>
         </div>
       </div>
     </div>
