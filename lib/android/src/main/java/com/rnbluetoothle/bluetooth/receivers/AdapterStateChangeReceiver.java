@@ -3,7 +3,6 @@ package com.rnbluetoothle.bluetooth.receivers;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 
@@ -16,7 +15,7 @@ import com.rnbluetoothle.bluetooth.receivers.TransactionReceiver;
  * Responsible to deal with adapter state change events.
  */
 public class AdapterStateChangeReceiver extends TransactionReceiver {
-    protected String EVENT_ON_STATE_CHANGE = "rnbluetoothle.onStateChange/";
+    protected String EVENT_ON_STATE_CHANGE = "rnbluetoothle.onStateChange ";
 
     public AdapterStateChangeReceiver(ReactApplicationContext context, String transactionId) {
         super(context, transactionId);

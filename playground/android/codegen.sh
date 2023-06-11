@@ -1,5 +1,5 @@
 cd ../;
-yarn add ../lib/ --save;
+yarn add ../lib;
 cd android;
 ./gradlew generateCodegenArtifactsFromSchema;
 cd ..;

@@ -59,11 +59,11 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
 
     RNBluetoothLeModule(ReactApplicationContext context) {
         super(context);
+
+        this.reactContext = context;
         this.transactionReceivers = new HashMap<>();
         this.deviceBluetoothGatts = new HashMap<String, BluetoothGatt>();
         this.deviceBluetoothGattCallbacks = new HashMap<String, JsBluetoothDeviceGattCallback>();
-
-        this.reactContext = context;
     }
 
     /**
@@ -337,6 +337,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
         String transactionId = null;
         String address = null;
 
+
         if (properties.length > 2) {
             address = properties[2];
         }
@@ -350,8 +351,8 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
             this.transactionReceivers.remove(transactionId);
         }
 
-        TransactionReceiver receiver = null;
         Log.v("Bluetooth", "Received event " + eventName + " " + transactionId);
+        TransactionReceiver receiver = null;
 
         switch (eventName) {
 
@@ -419,6 +420,11 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
                 receiver.unregister();
             }
         }
+    }
+
+    @com.facebook.react.bridge.ReactMethod
+    public void removeListeners(Integer count) {
+        // Keep: Required for RN built in Event Emitter Calls.
     }
 
     /**
@@ -544,14 +550,6 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
         return false;
     }
 
-    public void initialize() {
-
-    }
-
-    public void invalidate() {
-
-    }
-
     /**
      * Gets the event properties such: transactionId, eventName and address from
      * event name.
@@ -562,7 +560,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
      * @return
      */
     private String[] getEventProperties(String eventName) {
-        String[] properties = eventName.split(Pattern.quote("/"));
+        String[] properties = eventName.split(Pattern.quote(" "));
         Log.v("Bluetooth", Arrays.toString(properties));
 
         return properties;

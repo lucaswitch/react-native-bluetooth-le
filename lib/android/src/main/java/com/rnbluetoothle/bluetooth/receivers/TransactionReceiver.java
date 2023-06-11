@@ -15,8 +15,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
 public class TransactionReceiver extends BroadcastReceiver {
 
     protected String[] intentActions = {};
-    protected String transactionId;
-    protected ReactApplicationContext reactContext;
+    final protected String transactionId;
+    final protected ReactApplicationContext reactContext;
 
     public TransactionReceiver(ReactApplicationContext context, String transactionId) {
         this.reactContext = context;

@@ -1,4 +1,3 @@
-import {NativeEventEmitter, NativeModules, Platform, PermissionsAndroid} from 'react-native';
 import BluetoothModule from './NativeReactNativeBluetoothLe';
 import {
     BluetoothDevice,
@@ -8,10 +7,9 @@ import {
     BluetoothDeviceCharacteristic,
     BluetoothDeviceCharacteristicValue
 } from "./types";
+import {NativeEventEmitter, NativeModules, Platform, PermissionsAndroid} from 'react-native';
 // @ts-ignore
 import {BondError} from "./exceptions";
-
-const BluetoothLeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
 
 // @ts-ignore
 // @ts-ignore
@@ -235,9 +233,6 @@ export const Bluetooth = {
             throw new Error("The callback of onStateChange must be a function that handles bluetooth state change.");
         }
 
-        const event = `rnbluetoothle.onStateChange/${generateUUID()}`;
-
-        const listener = BluetoothLeEventEmitter.addListener(event, callback);
 
         // Trigger on load first time.
         if (this.getIsEnabled()) {
@@ -245,11 +240,14 @@ export const Bluetooth = {
         } else {
             callback({status: 'off'});
         }
+        const event = 'rnbluetoothle.onStateChange ' + generateUUID();
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
 
         BluetoothModule.addListener(event);
+        const eventListener = bluetoothEventEmitter.addListener(event, callback);
         return function () {
             BluetoothModule.removeListener(event);
-            listener.remove();
+            eventListener.remove();
         }
     },
 
@@ -563,7 +561,8 @@ export const Bluetooth = {
         const event = `rnbluetoothle.onMonitorValue.${transactionId}`;
 
         // Setup JNI event listeners.
-        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
+        const {ReactNativeBluetoothLe} = NativeModules;
+        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(ReactNativeBluetoothLe);
         BluetoothModule.addListener(event);
         const eventListener = bluetoothEventEmitter.addListener(event, callback);
 
@@ -630,54 +629,6 @@ export const Bluetooth = {
         const transactionId = generateUUID();
         const event = `rnbluetoothle.onMonitorValue/${transactionId}`;
     }
-
-    /**
-     * todo
-     * Listen whether bluetooth connection has changed.
-     * On Android:
-     *    The id is the remote device mac address.
-     *    Make sure to ask the user the following permissions or your application:
-     *    - android.permission.BLUETOOTH in your AndroidManifest.xml file.
-     *    - android.permission.BLUETOOTH_ADMIN in your AndroidManifest.xml file.
-     *    - android.permission.ACCESS_FINE_LOCATION in your AndroidManifest.xml file.
-     *    - android.permission.BLUETOOTH_CONNECT before using this function on application code.
-     * @return boolean Whether the unbonding was successfully.
-     */
-    /*
-    onConnectionChange(id, callback: (event: BluetoothConnectionStatusEvent) => void) {
-        if (!BluetoothModule) {
-            throw new Error("It was not possible to find BluetoothModule.");
-        }
-        if (!id || id.length === 0) {
-            throw new Error('"id" must be a valid platform address for targeting bluetooth device.');
-        }
-
-        // Check platform specific permissions.
-        // @ts-ignore
-        if (__DEV__) {
-            if (Platform.OS === 'android') {
-                const neededPermissions = ['android.permission.BLUETOOTH_CONNECT']
-                for (const permission of neededPermissions) {
-                    // @ts-ignore
-                    const granted = await PermissionsAndroid.check(permission);
-                    if (!granted) {
-                        throw new Error(`Before "unbound" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`)
-                    }
-                }
-            }
-        }
-
-        const event = `rnbluetoothle.onConnectionChange/${id}`;
-
-        const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
-        BluetoothModule.addListener(event);
-        const eventListener = bluetoothEventEmitter.addListener(event, callback);
-        return function () {
-            BluetoothModule.removeListener(event);
-            eventListener.remove();
-        }
-    }
-     */
 }
 
 

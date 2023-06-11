@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-native": "0.71.4",
-    "react-native-bluetooth-le": "../lib/",
+    "react-native": "0.71.10",
+    "react-native-bluetooth-le": "../lib",
     "styled-components": "^5.3.9"
   },
   "devDependencies": {

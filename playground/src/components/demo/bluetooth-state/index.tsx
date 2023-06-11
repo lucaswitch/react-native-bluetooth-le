@@ -74,3 +74,8 @@ export function BluetoothState() {
         </Card>
     </>
 };
+
+
+
+
+
