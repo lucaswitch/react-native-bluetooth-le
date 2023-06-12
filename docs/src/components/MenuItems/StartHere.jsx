@@ -1,16 +1,12 @@
 import * as React from 'react';
-import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import StarBorder from '@mui/icons-material/StarBorder';
 import SubjectIcon from '@mui/icons-material/Subject';
-import ArticleIcon from '@mui/icons-material/Article';
 import {useRouter} from "next/router";
 import Link from "next/link";
 
@@ -50,7 +46,7 @@ export default function StartHere() {
 
         <List component="div1" disablePadding>
           <Link href='/gettingStarted'>
-            <ListItemButton sx={styleSx} className={router.pathname === "/gettingStarted" ? "bg-[#b33ce6]" : ""} >
+            <ListItemButton sx={styleSx} className={router.pathname === "/gettingStarted" ? "font-bold text-white bg-[#b33ce6]" : ""} >
               <ListItemIcon>
               </ListItemIcon>
 
@@ -68,7 +64,7 @@ export default function StartHere() {
         <List component="div1" disablePadding>
           <Link href='/imperative'>
 
-            <ListItemButton sx={styleSx} className={router.pathname === "/imperative" ? "bg-[#b33ce6]" : ""}>
+            <ListItemButton sx={styleSx} className={router.pathname === "/imperative" ? "font-bold text-white bg-[#b33ce6]" : ""}>
               <ListItemIcon>
               </ListItemIcon>
                 <ListItemText primary="Imperative API"

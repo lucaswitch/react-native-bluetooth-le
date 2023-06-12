@@ -1,16 +1,12 @@
 import * as React from "react";
-import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import StarBorder from "@mui/icons-material/StarBorder";
 import SubjectIcon from "@mui/icons-material/Subject";
-import ArticleIcon from "@mui/icons-material/Article";
 import {useRouter} from "next/router";
 import Link from "next/link";
 
@@ -51,7 +47,7 @@ export default function Gatt() {
             <ListItemButton
               sx={styleSx}
               className={
-                router.pathname === "/gatt/bonding" ? "bg-[#b33ce6]" : ""
+                router.pathname === "/gatt/bonding" ? "font-bold text-white bg-[#b33ce6]" : ""
               }
             >
               <ListItemIcon></ListItemIcon>
@@ -73,7 +69,7 @@ export default function Gatt() {
 
             <ListItemButton sx={styleSx}
                             className={
-                              router.pathname === "/gatt/connection" ? "bg-[#b33ce6]" : ""
+                              router.pathname === "/gatt/connection" ? "font-bold text-white bg-[#b33ce6]" : ""
                             }
             >
               <ListItemIcon></ListItemIcon>
@@ -96,7 +92,7 @@ export default function Gatt() {
           <ListItemButton
             sx={styleSx}
             className={
-              router.pathname === "/gatt/device" ? "bg-[#b33ce6]" : ""
+              router.pathname === "/gatt/device" ? "font-bold text-white bg-[#b33ce6]" : ""
             }
           >
             <ListItemIcon></ListItemIcon>
@@ -118,7 +114,7 @@ export default function Gatt() {
           <ListItemButton
             sx={styleSx}
             className={
-              router.pathname === "/gatt/discover" ? "bg-[#b33ce6]" : ""
+              router.pathname === "/gatt/discover" ? "font-bold text-white bg-[#b33ce6]" : ""
             }
           >
             <ListItemIcon></ListItemIcon>
