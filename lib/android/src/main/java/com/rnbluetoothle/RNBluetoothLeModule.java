@@ -405,26 +405,13 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
         eventName = properties[0];
         if (properties.length > 1) {
             String transactionId = properties[1];
-            // Unregister the event if already exists.
+
             if (this.transactionReceivers.containsKey(transactionId)) {
                 TransactionReceiver receiver = this.transactionReceivers.get(transactionId);
+                receiver.unregister();
                 this.transactionReceivers.remove(transactionId);
-                receiver.unregister();
-            }
-        } else {
-            String transactionId = properties[1];
-            // Unregister the event if already exists.
-            if (this.transactionReceivers.containsKey(eventName)) {
-                TransactionReceiver receiver = this.transactionReceivers.get(eventName);
-                this.transactionReceivers.remove(eventName);
-                receiver.unregister();
             }
         }
-    }
-
-    @com.facebook.react.bridge.ReactMethod
-    public void removeListeners(Integer count) {
-        // Keep: Required for RN built in Event Emitter Calls.
     }
 
     /**
@@ -560,7 +547,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
      * @return
      */
     private String[] getEventProperties(String eventName) {
-        String[] properties = eventName.split(Pattern.quote(" "));
+        String[] properties = eventName.split(Pattern.quote("/"));
         Log.v("Bluetooth", Arrays.toString(properties));
 
         return properties;
