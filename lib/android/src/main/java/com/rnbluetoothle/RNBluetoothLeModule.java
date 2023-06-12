@@ -402,13 +402,15 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
     @Override
     public void removeListener(String eventName) {
         String[] properties = this.getEventProperties(eventName);
-        String transactionId = properties[1];
+        eventName = properties[0];
+        if (properties.length > 1) {
+            String transactionId = properties[1];
 
-        // Unregister the event if already exists.
-        if (this.transactionReceivers.containsKey(transactionId)) {
-            TransactionReceiver receiver = this.transactionReceivers.get(transactionId);
-            this.transactionReceivers.remove(transactionId);
-            receiver.unregister();
+            if (this.transactionReceivers.containsKey(transactionId)) {
+                TransactionReceiver receiver = this.transactionReceivers.get(transactionId);
+                receiver.unregister();
+                this.transactionReceivers.remove(transactionId);
+            }
         }
     }
 
