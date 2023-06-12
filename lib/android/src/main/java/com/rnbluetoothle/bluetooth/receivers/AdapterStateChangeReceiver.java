@@ -15,7 +15,7 @@ import com.rnbluetoothle.bluetooth.receivers.TransactionReceiver;
  * Responsible to deal with adapter state change events.
  */
 public class AdapterStateChangeReceiver extends TransactionReceiver {
-    protected String EVENT_ON_STATE_CHANGE = "rnbluetoothle.onStateChange ";
+    protected String EVENT_ON_STATE_CHANGE = "rnbluetoothle.onStateChange/";
 
     public AdapterStateChangeReceiver(ReactApplicationContext context, String transactionId) {
         super(context, transactionId);

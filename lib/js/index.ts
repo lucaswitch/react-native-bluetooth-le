@@ -240,7 +240,7 @@ export const Bluetooth = {
         } else {
             callback({status: 'off'});
         }
-        const event = 'rnbluetoothle.onStateChange ' + generateUUID();
+        const event = 'rnbluetoothle.onStateChange/' + generateUUID();
         const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(NativeModules.ReactNativeBluetoothLe);
 
         BluetoothModule.addListener(event);
