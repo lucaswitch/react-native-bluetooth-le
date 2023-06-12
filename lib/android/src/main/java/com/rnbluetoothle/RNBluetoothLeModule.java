@@ -471,6 +471,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
             BluetoothManager bluetoothManager = BluetoothState.getBluetoothManager(this.reactContext);
             List<BluetoothDevice> connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT);
             for (BluetoothDevice device : connectedDevices) {
+                Log.v("Bluetooth",device.getAddress()+" "+ id);
                 if (device.getAddress().equals(id)) {
                     return true;
                 }
@@ -564,13 +565,21 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
             JsBluetoothDeviceGattCallback gattCallback = new JsBluetoothDeviceGattCallback(this.reactContext, address);
             BluetoothDevice device = BluetoothState.getRemoteDevice(address, this.reactContext);
             gatt = device.connectGatt(this.reactContext, false, gattCallback);
-            if (gatt == null) {
+
+            if (gatt == null && gatt.connect()) {
                 return null;
             }
             this.deviceBluetoothGatts.put(address, gatt);
             this.deviceBluetoothGattCallbacks.put(address, gattCallback);
         }
 
+        if(!this.getIsConnected(address)){
+           if(!gatt.connect()){
+               this.deviceBluetoothGatts.remove(address);
+               this.deviceBluetoothGattCallbacks.remove(address);
+               return null;
+           }
+        }
         return gatt;
     }
 

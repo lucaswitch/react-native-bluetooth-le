@@ -32,7 +32,7 @@ public class JsBluetoothDeviceGattCallback extends BluetoothGattCallback {
     final private List<Map<String, String>> notifications;
 
     final protected String EVENT_ON_NOTIFY = "rnbluetoothle.onMonitorValue/";
-    final protected String EVENT_ON_CHANGE = "rnbluetoothle.onChange/";
+    final protected String EVENT_ON_CHANGE_CONNECTION = "rnbluetoothle.onConnectionChange";
 
     /**
      * React application context.
@@ -59,18 +59,19 @@ public class JsBluetoothDeviceGattCallback extends BluetoothGattCallback {
         String address = device.getAddress();
 
         if (newConnectionState == BluetoothProfile.STATE_CONNECTED) {
-            Log.v("Bluetooth", "Just connected on remote device " + address);
+            Log.v("Bluetooth", "Just connected on remote device " + address + " started discovering services.");
             gatt.discoverServices(); // Automatically discover remote device services when connected.
         }
 
         JsBluetoothConnectionState jsBluetoothConnectionState =
                 new JsBluetoothConnectionState(
+                        this.address,
                         newConnectionState,
                         this.prevConnectionState
                 );
         JsEventDispatcher.send(
                 this.reactContext,
-                this.EVENT_ON_CHANGE,
+                this.EVENT_ON_CHANGE_CONNECTION,
                 jsBluetoothConnectionState.getMap()
         );
     }

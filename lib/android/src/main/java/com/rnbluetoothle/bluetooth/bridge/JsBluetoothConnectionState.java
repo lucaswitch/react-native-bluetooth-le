@@ -10,10 +10,12 @@ import com.facebook.react.bridge.WritableMap;
  */
 public class JsBluetoothConnectionState {
 
+    protected String address;
     protected int state;
     protected int prevState;
 
-    public JsBluetoothConnectionState(int state, int prevState) {
+    public JsBluetoothConnectionState(String address, int state, int prevState) {
+        this.address = address;
         this.state = state;
         this.prevState = prevState;
     }
@@ -43,6 +45,8 @@ public class JsBluetoothConnectionState {
      */
     public WritableMap getMap() {
         WritableMap map = Arguments.createMap();
+
+        map.putString("address", this.address);
         map.putString("status", this.getStringState(this.state));
         map.putString("prev_status", this.getStringState(this.prevState));
         return map;

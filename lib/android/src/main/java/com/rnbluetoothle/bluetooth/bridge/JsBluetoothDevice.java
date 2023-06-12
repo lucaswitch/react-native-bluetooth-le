@@ -17,6 +17,7 @@ public class JsBluetoothDevice {
 
     public JsBluetoothDevice(Intent intent) {
         this.intent = intent;
+        this.device = JsBluetoothDevice.getDevice(intent);
     }
 
     public JsBluetoothDevice(BluetoothDevice device) {
@@ -49,10 +50,7 @@ public class JsBluetoothDevice {
      */
     public WritableMap getMap() {
         WritableMap payload = new WritableNativeMap();
-        BluetoothDevice device = JsBluetoothDevice.getDevice(this.intent);
-        if (this.device != null) {
-            device = this.device;
-        }
+        BluetoothDevice device = this.device;
 
         String deviceType;
         switch (device.getType()) {
@@ -85,6 +83,8 @@ public class JsBluetoothDevice {
         int bondState = device.getBondState();
         if (bondState == BluetoothDevice.BOND_BONDED) {
             payload.putString("bond", "bonded");
+        } else if(bondState == BluetoothDevice.BOND_BONDING){
+            payload.putString("bond", "bonding");
         } else {
             payload.putString("bond", "none");
         }

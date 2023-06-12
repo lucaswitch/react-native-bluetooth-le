@@ -11,6 +11,7 @@ import {Card} from '../../card';
 import {ButtonGroup, Container, ListItem, ListItemInside} from './style';
 import {OverlineText} from '../../texts';
 import {BondingButton} from '../bonding-button';
+import {DetailsButton} from '../details-button';
 
 /**
  * Bluetooth discovery demo.
@@ -99,7 +100,7 @@ export function Discovery() {
    */
   const renderItem = useCallback(
     (props: {index: number; item: BluetoothDevice}) => {
-      const {address, name, rssi, dbm, bond} = props.item;
+      const {address, name, bond} = props.item;
 
       return (
         <ListItem key={props.index}>
@@ -107,7 +108,10 @@ export function Discovery() {
             <OverlineText style={{color: '#000'}}>
               {`${name} | ${address}`}
             </OverlineText>
-            <BondingButton address={address} bond={bond} />
+            <ButtonGroup>
+              <BondingButton address={address} bond={bond} />
+              <DetailsButton device={props.item} />
+            </ButtonGroup>
           </ListItemInside>
         </ListItem>
       );
@@ -118,10 +122,7 @@ export function Discovery() {
   useEffect(() => {
     // Handle discovery.
     if (allowed && enabled) {
-      const unsubscribe = Bluetooth.onDiscovery(nearbyDevices => {
-        console.log('nearby', nearbyDevices);
-        setDevices([...nearbyDevices]);
-      });
+      const unsubscribe = Bluetooth.onDiscovery(setDevices);
       setDiscovering(true);
       return () => {
         setDiscovering(false);

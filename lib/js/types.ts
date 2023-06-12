@@ -1,9 +1,5 @@
-export type AdapterStatusEvent = {
-  status: "on" | "turning_on" | "turning_off" | "off" | "not_supported";
-};
-
 export type BluetoothDevice = {
-  id: string | null;
+  id: string;
   name: string | null;
   address: string;
   type: BluetoothDeviceSupport;
@@ -49,6 +45,11 @@ export type BluetoothDeviceBondStatus = "bonded" | "bonding" | "none";
 
 export type BluetoothDeviceSupport = "le" | "dual" | "unknown";
 
+export type AdapterStatusEvent = {
+  status: "on" | "turning_on" | "turning_off" | "off" | "not_supported";
+};
+
 export type BluetoothConnectionStatusEvent = {
   status: BluetoothDeviceConnectionStatus;
+  prev_status: BluetoothDeviceConnectionStatus | null;
 };

@@ -2,6 +2,7 @@ import BluetoothModule from "./NativeReactNativeBluetoothLe";
 import {
   AdapterStatusEvent,
   BluetoothConnectionPriority,
+  BluetoothConnectionStatusEvent,
   BluetoothDevice,
   BluetoothDeviceCharacteristicValue,
 } from "./types";
@@ -255,7 +256,7 @@ export const Bluetooth = {
     } else {
       callback({ status: "off" });
     }
-    const event = "rnbluetoothle.onStateChange " + generateUUID();
+    const event = "rnbluetoothle.onStateChange/" + generateUUID();
     const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(
       NativeModules.ReactNativeBluetoothLe
     );
@@ -265,6 +266,52 @@ export const Bluetooth = {
     return function () {
       BluetoothModule.removeListener(event);
       eventListener.remove();
+    };
+  },
+
+  /**
+   * On bluetooth peripheral has gatt connection state change.
+   * On Android:
+   *    The id is the remote device mac address.
+   *    Make sure to ask the user the following permissions or your application:
+   *    - android.permission.BLUETOOTH in your AndroidManifest.xml file.
+   *    - android.permission.BLUETOOTH_ADMIN in your AndroidManifest.xml file.
+   *    - android.permission.ACCESS_FINE_LOCATION in your AndroidManifest.xml file.
+   *    - android.permission.BLUETOOTH_CONNECT before using this function on application code.
+   */
+  onConnectionChange(
+    id: string,
+    callback: (event: BluetoothConnectionStatusEvent) => void
+  ): Function {
+    if (!BluetoothModule) {
+      throw new Error("It was not possible to find BluetoothModule.");
+    }
+
+    // @ts-ignore
+    if (__DEV__) {
+      if (Platform.OS === "android") {
+        const neededPermissions = ["android.permission.BLUETOOTH_CONNECT"];
+        for (const permission of neededPermissions) {
+          // @ts-ignore
+          PermissionsAndroid.check(permission).then((granted) => {
+            if (!granted) {
+              console.error(
+                `Before "onBondChange" function make sure to ask the user "${permission}" permission or it won't work, return always "false" or break the application.`
+              );
+            }
+          });
+        }
+      }
+    }
+
+    const event = "rnbluetoothle.onConnectionChange";
+    const bluetoothEventEmitter: NativeEventEmitter = new NativeEventEmitter(
+      NativeModules.ReactNativeBluetoothLe
+    );
+    const listener = bluetoothEventEmitter.addListener(event, callback);
+
+    return function () {
+      listener.remove();
     };
   },
 
@@ -291,7 +338,6 @@ export const Bluetooth = {
     const eventListener = nativeEventEmitter.addListener(
       event,
       (device: BluetoothDevice) => {
-        console.log("device", device);
         if (device.address === null) {
           return;
         }
@@ -455,7 +501,7 @@ export const Bluetooth = {
     }
 
     const transactionId = generateUUID();
-    const event = `rnbluetoothle.onMonitorValue.${transactionId}`;
+    const event = `rnbluetoothle.onMonitorValue/${transactionId}`;
 
     // Setup JNI event listeners.
     const { ReactNativeBluetoothLe } = NativeModules;

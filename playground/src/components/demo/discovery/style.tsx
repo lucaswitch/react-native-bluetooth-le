@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {View} from "react-native";
+import {View} from 'react-native';
 
 export const Container = styled(View)`
   display: flex;
@@ -28,11 +28,9 @@ export const ListItemInside = styled(View)`
   flex-direction: row;
 `;
 
-
 export const ButtonGroup = styled(View)`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
-  margin-top: 10px;
-`
+`;

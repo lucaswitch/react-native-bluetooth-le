@@ -1,6 +1,6 @@
 {
   "name": "react-native-bluetooth-le",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Just starting.",
   "react-native": "js/index",
   "source": "js/index",

@@ -19,13 +19,14 @@ import android.util.Log;
  */
 public class DiscoveryReceiver extends TransactionReceiver {
 
-    protected String EVENT_ON_DISCOVERY = "rnbluetoothle.onDiscovery";
+    protected String EVENT_ON_DISCOVERY = "rnbluetoothle.onDiscovery/";
 
     public DiscoveryReceiver(ReactApplicationContext context, String transactionId) {
         super(context, transactionId);
         this.intentActions = new String[]{
                 BluetoothDevice.ACTION_FOUND
         };
+        this.EVENT_ON_DISCOVERY = this.EVENT_ON_DISCOVERY + transactionId;
     }
 
     /**
@@ -63,7 +64,7 @@ public class DiscoveryReceiver extends TransactionReceiver {
         BluetoothAdapter bluetoothAdapter = BluetoothState.getSystemDefaultAdapter(this.reactContext);
         if (bluetoothAdapter != null) {
             if (bluetoothAdapter.cancelDiscovery()) {
-                Log.v("Bluetooth", "Stoped bluetooth discovery.");
+                Log.v("Bluetooth", "Stopped bluetooth discovery.");
             }
         }
     }

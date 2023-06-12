@@ -2,18 +2,17 @@ import {Bluetooth, BluetoothDevice} from 'react-native-bluetooth-le';
 import {useCallback, useEffect, useState} from 'react';
 import {FlatList, PermissionsAndroid, Platform, Text} from 'react-native';
 import {Card} from '../../card';
-import {Container, ListItem, ListItemInside} from './style';
+import {ButtonGroup, Container, ListItem, ListItemInside} from './style';
 import {OverlineText} from '../../texts';
 import {BondingButton} from '../bonding-button';
+import {DetailsButton} from '../details-button';
 
 /**
  * Bluetooth bonding demo.
  * @constructor
  */
 export function Bonding() {
-  const [allowed, setAllowed] = useState(false);
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
-  const [enabled, setEnabled] = useState<boolean>(false);
 
   /**
    * Asks bluetooth permission.
@@ -73,25 +72,16 @@ export function Bonding() {
     (props: {index: number; item: BluetoothDevice}) => {
       const {address, name, rssi, dbm, bond} = props.item;
 
-      /**
-       * When some pairing state changes through button pressing.
-       */
-      const handleOnChange = () => {
-        const bondedDevices = Bluetooth.getBondedDevices();
-        setDevices([...bondedDevices]);
-      };
-
       return (
         <ListItem key={props.index}>
           <ListItemInside>
             <OverlineText style={{color: '#000'}}>
               {`${name} | ${address}`}
             </OverlineText>
-            <BondingButton
-              address={address}
-              bond={bond}
-              onChange={handleOnChange}
-            />
+            <ButtonGroup>
+              <BondingButton address={address} bond={bond} />
+              <DetailsButton device={props.item} />
+            </ButtonGroup>
           </ListItemInside>
         </ListItem>
       );
@@ -102,9 +92,10 @@ export function Bonding() {
   useEffect(() => {
     let unsubscribe: Function | null = null;
     askBluetoothPermissions().then(() => {
-      const bondedDevices = Bluetooth.getBondedDevices();
-      setDevices(bondedDevices);
-      unsubscribe = Bluetooth.onBondedDevices(setDevices);
+      setDevices(Bluetooth.getBondedDevices());
+      unsubscribe = Bluetooth.onBondedDevices(bonded => {
+        setDevices(bonded);
+      });
     });
 
     return () => {

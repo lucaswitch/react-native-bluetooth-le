@@ -51,7 +51,6 @@ export function BluetoothState() {
     if (allowed) {
       const unsubscribe = Bluetooth.onStateChange(({status}) => {
         setState(status);
-        console.log('status', status);
       });
 
       setName(Bluetooth.getName());
