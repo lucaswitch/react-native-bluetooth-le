@@ -66,6 +66,7 @@ public class RNBluetoothLeModule extends NativeReactNativeBluetoothLeSpec {
         this.deviceBluetoothGattCallbacks = new HashMap<String, JsBluetoothDeviceGattCallback>();
     }
 
+    
     /**
      * Gets the module name.
      *

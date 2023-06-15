@@ -6,7 +6,11 @@ import {
     BluetoothDeviceService
 } from "./types";
 
+
+
 export interface Spec extends TurboModule {
+
+
     /**
      * Turn on Bluetooth Module of device if possible.
      */
