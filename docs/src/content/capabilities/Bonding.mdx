@@ -1,0 +1,123 @@
+<section id="section1" className="section">
+  ## Bonding Button
+
+  ```js
+      import {Bluetooth, BluetoothDevice} from "react-native-bluetooth-le";
+
+      const [bondState, setBondState] = useState(bond);
+      const [loading, setLoading] = useState(false);
+
+      const handleOnPress = useCallback(async () => {
+      if (!loading) {
+      setLoading(true);
+      try {
+      if (bondState === 'bonded') {
+      if (Bluetooth.getIsBonded(address)) { // Maybe the device was bond state has changed on device configuration.
+      await Bluetooth.unBond(address);
+    }
+    } else {
+      if (!Bluetooth.getIsBonded(address)) {  // Maybe the device was bond state has changed on device configuration.
+      setLoading(true);
+      await Bluetooth.bond(address)
+      if (onChange) {
+      onChange();
+    }
+    }
+    }
+
+    } catch (err) {
+
+      console.error(err);
+      Alert.alert('A error has ocurred', `Something just went wrong, :/ ${err}`);
+    }
+      setLoading(false)
+
+    }
+    }, [bondState, loading, onChange])
+
+      useEffect(() => {
+      Bluetooth.onBondChange(address, (device: BluetoothDevice) => {
+        setBondState(device.bond);
+      })
+    }, [address, bond])
+  ```
+</section>
+<section id="section2" className="section">
+  ## Bonding
+
+  ```js
+    import {Bluetooth, BluetoothDevice} from "react-native-bluetooth-le";
+
+    const [allowed, setAllowed] = useState(false);
+    const [devices, setDevices] = useState<BluetoothDevice[]>([])
+    const [enabled, setEnabled] = useState<boolean>(false)
+
+    /**
+    * Asks bluetooth permission.
+    */
+    const askBluetoothPermissions = useCallback(async () => {
+      if (Platform.OS === 'android') {
+
+      // Connect permission
+      if (!await PermissionsAndroid.check('android.permission.BLUETOOTH_CONNECT'))
+      await PermissionsAndroid.request('android.permission.BLUETOOTH_CONNECT', {
+      title: 'We need permission to access your bluetooth adapter.',
+      message: 'To proceed please press "Allow".',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'Allow',
+    })
+
+      // Scan permission
+      if (!await PermissionsAndroid.check('android.permission.BLUETOOTH_SCAN'))
+      await PermissionsAndroid.request('android.permission.BLUETOOTH_SCAN', {
+      title: 'We need permission to access your bluetooth adapter scan.',
+      message: 'To proceed please press "Allow".',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'Allow',
+    })
+
+      if (!await PermissionsAndroid.check('android.permission.ACCESS_FINE_LOCATION')) {
+      await PermissionsAndroid.request('android.permission.ACCESS_FINE_LOCATION', {
+      title: 'We need permission to access your location to perform a bluetooth discovery.',
+      message: 'To proceed please press "Allow".',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'Allow',
+    })
+    }
+    }
+    }, [])
+
+    /**
+    * Renders a device item.
+    */
+    const renderItem = useCallback((props: { index: number, item: BluetoothDevice }) => {
+      const {address, name, rssi, dbm, bond} = props.item;
+
+      /**
+       * When some pairing state changes through button pressing.
+       */
+      const handleOnChange = () => {
+      const bondedDevices = Bluetooth.getBondedDevices();
+      setDevices([...bondedDevices]);
+    }
+
+      return <ListItem key={props.index}>
+      <ListItemInside>
+      <OverlineText style={{color: '#000'}}>
+    {`${name} | ${address}`}
+      </OverlineText>
+      <BondingButton address={address} bond={bond} onChange={handleOnChange}/>
+      </ListItemInside>
+      </ListItem>
+    }, [])
+
+    useEffect(() => {
+      askBluetoothPermissions().then(() => {
+        const bondedDevices = Bluetooth.getBondedDevices();
+        setDevices([...bondedDevices]);
+      })
+    }, [askBluetoothPermissions])
+  ```
+</section>
+
+export default ({children}) => <div className='prose'>{children}</div>

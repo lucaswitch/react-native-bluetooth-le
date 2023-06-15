@@ -1,0 +1,31 @@
+<section id="section1" className="section">
+  ## Imperative API
+
+  All bluetooth operations are provided using a event driven and functional programming paradigm approach, in this paradigm we avoid persisting state and mutate it.
+
+  ```bash
+  import {turnOnBluetoothIfPossible, turnOffBluetoothIfPossible, onDiscovery, onStateChange} from 'react-native-bluetooth-le';
+
+  turnOnBluetoothIfPossible(); // The bluetooth adapter was turned on.
+  turnOffBluetoothIfPossible(); // The bluetooth adapter was turned off.
+
+  /** Listen for bluetooth power state change */
+  const unsubscribe = onStateChange(({status})=>{
+  console.log(status); // "on" or "off"
+})
+
+  // Later when does not need to listen this event anymore...
+  unsubscribe();
+
+
+  /** Listen bluetooth discovery event  */
+  const unsubscribe = onDiscovery((device)=>{
+  console.log(device);
+})
+
+  // Later when does not need to listen this event anymore...
+  unsubscribe();
+  ```
+</section>
+
+export default ({children}) => <div className='prose'>{children}</div>
