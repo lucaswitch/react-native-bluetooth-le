@@ -1,7 +1,7 @@
 {
   "name": "react-native-bluetooth-le",
-  "version": "0.0.0",
-  "description": "Just starting.",
+  "version": "1.0.0",
+  "description": "A experimental approach to run bluetooth low energy applications with javascript.",
   "react-native": "js/index",
   "source": "js/index",
   "files": [
